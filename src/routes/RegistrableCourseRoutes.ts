@@ -74,7 +74,6 @@ router.post("/", async (req, res, next) => {
   requireRole([ROLES.ADMIN], req, res, next, async (req, res, next) => {
     let registrableCourses = req.body.registrableCourses;
     const session = await mongoose.startSession();
-    let isCompleted = true;
     try {
       await session.withTransaction(async () => {
         for (let index = 0; index < registrableCourses.length; index++) {
@@ -89,7 +88,6 @@ router.post("/", async (req, res, next) => {
           );
           if (!registration) {
             session.abortTransaction();
-            isCompleted = false;
           }
 
           // Validate course
@@ -103,7 +101,6 @@ router.post("/", async (req, res, next) => {
           );
           if (!course) {
             session.abortTransaction();
-            isCompleted = false;
           }
           // Only if registration and course are valid then
           let registrableCourse: IRegistrableCourse = new RegistrableCourse({
@@ -127,7 +124,6 @@ router.post("/", async (req, res, next) => {
                 registrableCourse: null,
               });
               session.abortTransaction();
-              isCompleted = false;
             }
           } catch (error) {
             log(STATUSES.ERROR, error.message);
@@ -136,7 +132,6 @@ router.post("/", async (req, res, next) => {
               registrableCourse: null,
             });
             session.abortTransaction();
-            isCompleted = false;
           }
         }
         await session.commitTransaction();
