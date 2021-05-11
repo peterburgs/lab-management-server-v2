@@ -32,6 +32,8 @@ const dotenv = __importStar(require("dotenv"));
 dotenv.config();
 const UserRoutes_1 = __importDefault(require("./routes/UserRoutes"));
 const AuthRoutes_1 = __importDefault(require("./routes/AuthRoutes"));
+const SemesterRoutes_1 = __importDefault(require("./routes/SemesterRoutes"));
+const RegistrableCourseRoutes_1 = __importDefault(require("./routes/RegistrableCourseRoutes"));
 const port = 3001;
 const app = express_1.default();
 const API_URL = process.env.API_URL;
@@ -55,6 +57,8 @@ app.get(`${API_URL}`, (req, res) => {
 });
 app.use(`${API_URL}/users`, UserRoutes_1.default);
 app.use(`${API_URL}/auth`, AuthRoutes_1.default);
+app.use(`${API_URL}/semesters`, SemesterRoutes_1.default);
+app.use(`${API_URL}/registrable-courses`, RegistrableCourseRoutes_1.default);
 app.use((req, res, next) => {
     const error = new Error("Page Not Found!");
     error.code = "404";

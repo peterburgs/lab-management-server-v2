@@ -37,27 +37,27 @@ const statuses_1 = require("../common/statuses");
 const types_1 = require("../types");
 const requireAuth_1 = __importDefault(require("../helpers/requireAuth"));
 const requireRoles_1 = __importDefault(require("../helpers/requireRoles"));
-const User_1 = __importDefault(require("../models/User"));
+const Course_1 = __importDefault(require("../models/Course"));
 const router = express_1.Router();
 router.use(requireAuth_1.default);
 router.get("/", (req, res, next) => {
-    requireRoles_1.default([types_1.ROLES.ADMIN], req, res, next, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    requireRoles_1.default([types_1.ROLES.ADMIN, types_1.ROLES.LECTURER], req, res, next, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const users = yield User_1.default.find(Object.assign({ isHidden: false }, req.query)).exec();
-            if (users) {
-                log_1.default(statuses_1.STATUSES.SUCCESS, "Get all users successfully");
+            const courses = yield Course_1.default.find(Object.assign({ isHidden: false }, req.query)).exec();
+            if (courses) {
+                log_1.default(statuses_1.STATUSES.SUCCESS, "Get all courses successfully");
                 res.status(200).json({
-                    message: log_1.message(statuses_1.STATUSES.SUCCESS, "Get all users successfully"),
-                    count: users.length,
-                    users,
+                    message: log_1.message(statuses_1.STATUSES.SUCCESS, "Get all courses successfully"),
+                    count: courses.length,
+                    courses,
                 });
             }
             else {
-                log_1.default(statuses_1.STATUSES.ERROR, "Cannot get users");
+                log_1.default(statuses_1.STATUSES.ERROR, "Cannot get courses");
                 res.status(404).json({
-                    message: log_1.message(statuses_1.STATUSES.ERROR, "Cannot get users"),
+                    message: log_1.message(statuses_1.STATUSES.ERROR, "Cannot get courses"),
                     count: 0,
-                    users: [],
+                    courses: [],
                 });
             }
         }
@@ -66,27 +66,32 @@ router.get("/", (req, res, next) => {
             res.status(500).json({
                 message: log_1.message(statuses_1.STATUSES.ERROR, error.message),
                 count: 0,
-                users: [],
+                courses: [],
             });
         }
     }));
 });
 router.post("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     requireRoles_1.default([types_1.ROLES.ADMIN], req, res, next, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-        let user = new User_1.default({
-            _id: req.body._id,
-            email: req.body.email,
-            fullName: req.body.fullName,
-            roles: req.body.roles,
+        let course = new Course_1.default({
+            courseName: req.body.courseName,
+            numberOfCredits: req.body.numberOfCredits,
             isHidden: req.body.isHidden,
         });
         try {
-            user = yield user.save();
-            if (user) {
-                log_1.default(statuses_1.STATUSES.CREATED, "Create new user successfully");
+            course = yield course.save();
+            if (course) {
+                log_1.default(statuses_1.STATUSES.CREATED, "Create new course successfully");
                 res.status(201).json({
-                    message: log_1.message(statuses_1.STATUSES.CREATED, "Create new user successfully"),
-                    user,
+                    message: log_1.message(statuses_1.STATUSES.CREATED, "Create new course successfully"),
+                    course,
+                });
+            }
+            else {
+                log_1.default(statuses_1.STATUSES.ERROR, "Cannot create new course");
+                res.status(500).json({
+                    message: log_1.message(statuses_1.STATUSES.ERROR, "Cannot create new course"),
+                    course: null,
                 });
             }
         }
@@ -94,7 +99,7 @@ router.post("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function*
             log_1.default(statuses_1.STATUSES.ERROR, error.message);
             res.status(500).json({
                 message: log_1.message(statuses_1.STATUSES.ERROR, error.message),
-                user: null,
+                course: null,
             });
         }
     }));
@@ -102,24 +107,24 @@ router.post("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function*
 router.put("/:id", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     requireRoles_1.default([types_1.ROLES.ADMIN], req, res, next, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const user = yield User_1.default.findByIdAndUpdate({
+            let course = yield Course_1.default.findByIdAndUpdate({
                 _id: req.params.id,
                 isHidden: false,
             }, {
                 $set: req.body,
             }, { new: true }).exec();
-            if (user) {
-                log_1.default(statuses_1.STATUSES.SUCCESS, "Update user successfully");
+            if (course) {
+                log_1.default(statuses_1.STATUSES.SUCCESS, "Update course successfully");
                 res.status(200).json({
-                    message: log_1.message(statuses_1.STATUSES.SUCCESS, "Update user successfully"),
-                    user,
+                    message: log_1.message(statuses_1.STATUSES.SUCCESS, "Update course successfully"),
+                    course,
                 });
             }
             else {
-                log_1.default(statuses_1.STATUSES.ERROR, "Cannot update user");
+                log_1.default(statuses_1.STATUSES.ERROR, "Cannot update course");
                 res.status(422).json({
-                    message: log_1.message(statuses_1.STATUSES.ERROR, "Cannot update user"),
-                    user: null,
+                    message: log_1.message(statuses_1.STATUSES.ERROR, "Cannot update course"),
+                    course: null,
                 });
             }
         }
@@ -127,7 +132,7 @@ router.put("/:id", (req, res, next) => __awaiter(void 0, void 0, void 0, functio
             log_1.default(statuses_1.STATUSES.ERROR, error.message);
             res.status(500).json({
                 message: log_1.message(statuses_1.STATUSES.ERROR, error.message),
-                user: null,
+                semester: null,
             });
         }
     }));
@@ -135,32 +140,32 @@ router.put("/:id", (req, res, next) => __awaiter(void 0, void 0, void 0, functio
 router.delete("/:id", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     requireRoles_1.default([types_1.ROLES.ADMIN], req, res, next, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const deletedUser = yield User_1.default.findByIdAndUpdate({
+            const deletedCourse = yield Course_1.default.findByIdAndUpdate({
                 _id: req.params.id,
                 isHidden: false,
             }, {
                 $set: { isHidden: true },
             }, { new: true }).exec();
-            if (deletedUser) {
-                log_1.default(statuses_1.STATUSES.SUCCESS, "Delete user successfully");
+            if (deletedCourse) {
+                log_1.default(statuses_1.STATUSES.SUCCESS, "Delete course successfully");
                 res.status(200).json({
-                    message: log_1.message(statuses_1.STATUSES.SUCCESS, "Delete user successfully"),
-                    user: deletedUser,
+                    message: log_1.message(statuses_1.STATUSES.SUCCESS, "Delete course successfully"),
+                    course: deletedCourse,
                 });
             }
             else {
-                log_1.default(statuses_1.STATUSES.ERROR, "Cannot delete user");
+                log_1.default(statuses_1.STATUSES.ERROR, "Cannot delete course");
                 res.status(500).json({
-                    message: log_1.message(statuses_1.STATUSES.ERROR, "Cannot delete user"),
-                    user: null,
+                    message: log_1.message(statuses_1.STATUSES.ERROR, "Cannot delete course"),
+                    course: null,
                 });
             }
         }
         catch (error) {
-            log_1.default(statuses_1.STATUSES.ERROR, "Cannot delete user");
+            log_1.default(statuses_1.STATUSES.ERROR, "Cannot delete course");
             res.status(500).json({
                 message: log_1.message(statuses_1.STATUSES.ERROR, error.message),
-                user: null,
+                course: null,
             });
         }
     }));
