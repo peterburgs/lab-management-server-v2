@@ -30,8 +30,8 @@ const morgan_1 = __importDefault(require("morgan"));
 log_1.default(statuses_1.STATUSES.INFO, "Initializing server");
 const dotenv = __importStar(require("dotenv"));
 dotenv.config();
-require("./models/Course");
 const UserRoutes_1 = __importDefault(require("./routes/UserRoutes"));
+const AuthRoutes_1 = __importDefault(require("./routes/AuthRoutes"));
 const port = 3001;
 const app = express_1.default();
 const API_URL = process.env.API_URL;
@@ -48,12 +48,13 @@ app.use((req, res, next) => {
     }
     next();
 });
-app.use(`${API_URL}/users`, UserRoutes_1.default);
 app.get(`${API_URL}`, (req, res) => {
     res.status(200).json({
         message: "Welcome to Lab Management version 2",
     });
 });
+app.use(`${API_URL}/users`, UserRoutes_1.default);
+app.use(`${API_URL}/auth`, AuthRoutes_1.default);
 app.use((req, res, next) => {
     const error = new Error("Page Not Found!");
     error.code = "404";

@@ -52,8 +52,8 @@ export interface ITeaching extends Document {
   course: string;
   group: number;
   dayOfWeek: DAY_OF_WEEKS;
-  startPeriod: PeriodNum;
-  endPeriod: PeriodNum;
+  startPeriod: PERIOD;
+  endPeriod: PERIOD;
   numberOfStudents: number;
   theoryRoom: string;
   numberOfPracticalWeeks: number;

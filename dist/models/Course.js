@@ -24,7 +24,6 @@ const courseSchema = new mongoose_1.Schema({
     _id: {
         type: String,
         required: true,
-        unique: true,
     },
     courseName: {
         type: String,
