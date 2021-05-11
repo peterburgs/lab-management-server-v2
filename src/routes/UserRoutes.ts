@@ -125,10 +125,16 @@ router.delete("/:id", async (req, res, next) => {
         { new: true }
       ).exec();
       if (deletedUser) {
-        log(STATUSES.DELETED, "Delete user successfully");
+        log(STATUSES.SUCCESS, "Delete user successfully");
         res.status(200).json({
-          message: message(STATUSES.DELETED, "Delete user successfully"),
+          message: message(STATUSES.SUCCESS, "Delete user successfully"),
           user: deletedUser,
+        });
+      } else {
+        log(STATUSES.ERROR, "Cannot delete user");
+        res.status(500).json({
+          message: message(STATUSES.ERROR, "Cannot delete user"),
+          user: null,
         });
       }
     } catch (error) {

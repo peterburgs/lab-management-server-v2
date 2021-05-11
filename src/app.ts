@@ -13,6 +13,9 @@ dotenv.config();
 // Import Routes
 import userRoutes from "./routes/UserRoutes";
 import authRoutes from "./routes/AuthRoutes";
+import semesterRoutes from "./routes/SemesterRoutes";
+import registrableCourseRoutes from "./routes/RegistrableCourseRoutes";
+
 // Config app
 const port = 3001;
 const app: Application = express();
@@ -54,6 +57,8 @@ app.get(`${API_URL}`, (req: Request, res: Response) => {
 });
 app.use(`${API_URL}/users`, userRoutes);
 app.use(`${API_URL}/auth`, authRoutes);
+app.use(`${API_URL}/semesters`, semesterRoutes);
+app.use(`${API_URL}/registrable-courses`, registrableCourseRoutes);
 
 // Handle 404 error
 app.use((req: Request, res: Response, next: NextFunction) => {

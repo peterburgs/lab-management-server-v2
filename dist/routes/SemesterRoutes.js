@@ -37,27 +37,27 @@ const statuses_1 = require("../common/statuses");
 const types_1 = require("../types");
 const requireAuth_1 = __importDefault(require("../helpers/requireAuth"));
 const requireRoles_1 = __importDefault(require("../helpers/requireRoles"));
-const User_1 = __importDefault(require("../models/User"));
+const Semester_1 = __importDefault(require("../models/Semester"));
 const router = express_1.Router();
 router.use(requireAuth_1.default);
 router.get("/", (req, res, next) => {
-    requireRoles_1.default([types_1.ROLES.ADMIN], req, res, next, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    requireRoles_1.default([types_1.ROLES.ADMIN, types_1.ROLES.LECTURER], req, res, next, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const users = yield User_1.default.find(Object.assign({ isHidden: false }, req.query)).exec();
-            if (users) {
-                log_1.default(statuses_1.STATUSES.SUCCESS, "Get all users successfully");
+            const semesters = yield Semester_1.default.find(Object.assign({ isHidden: false }, req.query)).exec();
+            if (semesters) {
+                log_1.default(statuses_1.STATUSES.SUCCESS, "Get all semesters successfully");
                 res.status(200).json({
-                    message: log_1.message(statuses_1.STATUSES.SUCCESS, "Get all users successfully"),
-                    count: users.length,
-                    users,
+                    message: log_1.message(statuses_1.STATUSES.SUCCESS, "Get all semesters successfully"),
+                    count: semesters.length,
+                    semesters,
                 });
             }
             else {
-                log_1.default(statuses_1.STATUSES.ERROR, "Cannot get users");
+                log_1.default(statuses_1.STATUSES.ERROR, "Cannot get semesters");
                 res.status(404).json({
-                    message: log_1.message(statuses_1.STATUSES.ERROR, "Cannot get users"),
+                    message: log_1.message(statuses_1.STATUSES.ERROR, "Cannot get semesters"),
                     count: 0,
-                    users: [],
+                    semesters: [],
                 });
             }
         }
@@ -66,27 +66,34 @@ router.get("/", (req, res, next) => {
             res.status(500).json({
                 message: log_1.message(statuses_1.STATUSES.ERROR, error.message),
                 count: 0,
-                users: [],
+                semesters: [],
             });
         }
     }));
 });
 router.post("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     requireRoles_1.default([types_1.ROLES.ADMIN], req, res, next, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-        let user = new User_1.default({
-            _id: req.body._id,
-            email: req.body.email,
-            fullName: req.body.fullName,
-            roles: req.body.roles,
+        let semester = new Semester_1.default({
+            startDate: new Date(req.body.startDate),
+            semesterName: req.body.semesterName,
+            numberOfWeeks: req.body.numberOfWeeks,
+            isOpening: req.body.isOpening,
             isHidden: req.body.isHidden,
         });
         try {
-            user = yield user.save();
-            if (user) {
-                log_1.default(statuses_1.STATUSES.CREATED, "Create new user successfully");
+            semester = yield semester.save();
+            if (semester) {
+                log_1.default(statuses_1.STATUSES.CREATED, "Create new semester successfully");
                 res.status(201).json({
-                    message: log_1.message(statuses_1.STATUSES.CREATED, "Create new user successfully"),
-                    user,
+                    message: log_1.message(statuses_1.STATUSES.CREATED, "Create new semester successfully"),
+                    semester,
+                });
+            }
+            else {
+                log_1.default(statuses_1.STATUSES.ERROR, "Cannot create new semester");
+                res.status(500).json({
+                    message: log_1.message(statuses_1.STATUSES.ERROR, "Cannot create new semester"),
+                    semester,
                 });
             }
         }
@@ -94,7 +101,7 @@ router.post("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function*
             log_1.default(statuses_1.STATUSES.ERROR, error.message);
             res.status(500).json({
                 message: log_1.message(statuses_1.STATUSES.ERROR, error.message),
-                user: null,
+                semester: null,
             });
         }
     }));
@@ -102,24 +109,24 @@ router.post("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function*
 router.put("/:id", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     requireRoles_1.default([types_1.ROLES.ADMIN], req, res, next, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const user = yield User_1.default.findByIdAndUpdate({
+            let semester = yield Semester_1.default.findByIdAndUpdate({
                 _id: req.params.id,
                 isHidden: false,
             }, {
                 $set: req.body,
             }, { new: true }).exec();
-            if (user) {
-                log_1.default(statuses_1.STATUSES.SUCCESS, "Update user successfully");
+            if (semester) {
+                log_1.default(statuses_1.STATUSES.SUCCESS, "Update semester successfully");
                 res.status(200).json({
-                    message: log_1.message(statuses_1.STATUSES.SUCCESS, "Update user successfully"),
-                    user,
+                    message: log_1.message(statuses_1.STATUSES.SUCCESS, "Update semester successfully"),
+                    semester,
                 });
             }
             else {
-                log_1.default(statuses_1.STATUSES.ERROR, "Cannot update user");
+                log_1.default(statuses_1.STATUSES.ERROR, "Cannot update semester");
                 res.status(422).json({
-                    message: log_1.message(statuses_1.STATUSES.ERROR, "Cannot update user"),
-                    user: null,
+                    message: log_1.message(statuses_1.STATUSES.ERROR, "Cannot update semester"),
+                    semester: null,
                 });
             }
         }
@@ -127,40 +134,7 @@ router.put("/:id", (req, res, next) => __awaiter(void 0, void 0, void 0, functio
             log_1.default(statuses_1.STATUSES.ERROR, error.message);
             res.status(500).json({
                 message: log_1.message(statuses_1.STATUSES.ERROR, error.message),
-                user: null,
-            });
-        }
-    }));
-}));
-router.delete("/:id", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    requireRoles_1.default([types_1.ROLES.ADMIN], req, res, next, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-        try {
-            const deletedUser = yield User_1.default.findByIdAndUpdate({
-                _id: req.params.id,
-                isHidden: false,
-            }, {
-                $set: { isHidden: true },
-            }, { new: true }).exec();
-            if (deletedUser) {
-                log_1.default(statuses_1.STATUSES.SUCCESS, "Delete user successfully");
-                res.status(200).json({
-                    message: log_1.message(statuses_1.STATUSES.SUCCESS, "Delete user successfully"),
-                    user: deletedUser,
-                });
-            }
-            else {
-                log_1.default(statuses_1.STATUSES.ERROR, "Cannot delete user");
-                res.status(500).json({
-                    message: log_1.message(statuses_1.STATUSES.ERROR, "Cannot delete user"),
-                    user: null,
-                });
-            }
-        }
-        catch (error) {
-            log_1.default(statuses_1.STATUSES.ERROR, "Cannot delete user");
-            res.status(500).json({
-                message: log_1.message(statuses_1.STATUSES.ERROR, error.message),
-                user: null,
+                semester: null,
             });
         }
     }));
