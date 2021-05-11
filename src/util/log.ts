@@ -6,3 +6,6 @@ export default (status: STATUSES, message: string) => {
   }
   console.log(`${barack}\n🔥${status}: ${message}🔥\n${barack}`);
 };
+export function message(status: STATUSES, message: string) {
+  return `🔥${status}: ${message}🔥`;
+}

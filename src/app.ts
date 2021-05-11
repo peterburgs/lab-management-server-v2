@@ -10,12 +10,9 @@ log(STATUSES.INFO, "Initializing server");
 import * as dotenv from "dotenv";
 dotenv.config();
 
-// Import Models
-import "./models/Course";
-
 // Import Routes
 import userRoutes from "./routes/UserRoutes";
-
+import authRoutes from "./routes/AuthRoutes";
 // Config app
 const port = 3001;
 const app: Application = express();
@@ -49,12 +46,14 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   next();
 });
 // Define URL
-app.use(`${API_URL}/users`, userRoutes);
+
 app.get(`${API_URL}`, (req: Request, res: Response) => {
   res.status(200).json({
     message: "Welcome to Lab Management version 2",
   });
 });
+app.use(`${API_URL}/users`, userRoutes);
+app.use(`${API_URL}/auth`, authRoutes);
 
 // Handle 404 error
 app.use((req: Request, res: Response, next: NextFunction) => {

@@ -7,7 +7,6 @@ const courseSchema: Schema = new Schema(
     _id: {
       type: String,
       required: true,
-      unique: true,
     },
     courseName: {
       type: String,
