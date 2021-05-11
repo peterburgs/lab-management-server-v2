@@ -78,7 +78,6 @@ router.post("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function*
     requireRoles_1.default([types_1.ROLES.ADMIN], req, res, next, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         let registrableCourses = req.body.registrableCourses;
         const session = yield mongoose_1.default.startSession();
-        let isCompleted = true;
         try {
             yield session.withTransaction(() => __awaiter(void 0, void 0, void 0, function* () {
                 for (let index = 0; index < registrableCourses.length; index++) {
@@ -88,7 +87,6 @@ router.post("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function*
                     }, null, { session });
                     if (!registration) {
                         session.abortTransaction();
-                        isCompleted = false;
                     }
                     let course = yield Course_1.default.findOne({
                         _id: registrableCourses[index].course,
@@ -96,7 +94,6 @@ router.post("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function*
                     }, null, { session });
                     if (!course) {
                         session.abortTransaction();
-                        isCompleted = false;
                     }
                     let registrableCourse = new RegistrableCourse_1.default({
                         registration: registrableCourses[index].registration,
@@ -114,7 +111,6 @@ router.post("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function*
                                 registrableCourse: null,
                             });
                             session.abortTransaction();
-                            isCompleted = false;
                         }
                     }
                     catch (error) {
@@ -124,7 +120,6 @@ router.post("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function*
                             registrableCourse: null,
                         });
                         session.abortTransaction();
-                        isCompleted = false;
                     }
                 }
                 yield session.commitTransaction();
