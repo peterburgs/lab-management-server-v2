@@ -24,6 +24,10 @@ const semesterSchema: Schema = new Schema(
       required: true,
       default: true,
     },
+    labSchedule: {
+      type: Array,
+      required: false,
+    },
     isHidden: {
       type: Boolean,
       required: false,

@@ -46,6 +46,7 @@ export interface ISemester extends Document {
   numberOfWeeks: number;
   isOpening: boolean;
   isHidden: boolean;
+  labSchedule: number[][];
 }
 export interface ITeaching extends Document {
   user: string;
@@ -81,7 +82,7 @@ export interface IRegistrableCourse extends Document {
 }
 export interface ILab extends Document {
   labName: string;
-  capacity: string;
+  capacity: number;
   isHidden: boolean;
 }
 export interface ILabUsage extends Document {

@@ -67,7 +67,6 @@ router.get("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function* 
             });
         }
         else {
-            console.log(req.body.user);
             res.status(500).json({
                 message: log_1.message(statuses_1.STATUSES.ERROR, "Role of user is not allowed"),
                 verifiedUser: null,

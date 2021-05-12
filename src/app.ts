@@ -11,10 +11,15 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 // Import Routes
-import userRoutes from "./routes/UserRoutes";
 import authRoutes from "./routes/AuthRoutes";
-import semesterRoutes from "./routes/SemesterRoutes";
+import courseRoutes from "./routes/CourseRoutes";
+import labRoutes from "./routes/LabRoutes";
 import registrableCourseRoutes from "./routes/RegistrableCourseRoutes";
+import registrationRoutes from "./routes/RegistrationRoutes";
+import scheduleRoutes from "./routes/ScheduleRoutes";
+import semesterRoutes from "./routes/SemesterRoutes";
+import teachingRoutes from "./routes/TeachingRoutes";
+import userRoutes from "./routes/UserRoutes";
 
 // Config app
 const port = 3001;
@@ -55,10 +60,15 @@ app.get(`${API_URL}`, (req: Request, res: Response) => {
     message: "Welcome to Lab Management version 2",
   });
 });
-app.use(`${API_URL}/users`, userRoutes);
 app.use(`${API_URL}/auth`, authRoutes);
-app.use(`${API_URL}/semesters`, semesterRoutes);
+app.use(`${API_URL}/courses`, courseRoutes);
+app.use(`${API_URL}/labs`, labRoutes);
 app.use(`${API_URL}/registrable-courses`, registrableCourseRoutes);
+app.use(`${API_URL}/registrations`, registrationRoutes);
+app.use(`${API_URL}/schedules`, scheduleRoutes);
+app.use(`${API_URL}/semesters`, semesterRoutes);
+app.use(`${API_URL}/teachings`, teachingRoutes);
+app.use(`${API_URL}/users`, userRoutes);
 
 // Handle 404 error
 app.use((req: Request, res: Response, next: NextFunction) => {
