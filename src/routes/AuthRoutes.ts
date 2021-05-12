@@ -46,7 +46,6 @@ router.get("/", async (req, res, next) => {
         verifiedToken: req.headers.authorization,
       });
     } else {
-      console.log(req.body.user);
       res.status(500).json({
         message: message(STATUSES.ERROR, "Role of user is not allowed"),
         verifiedUser: null,

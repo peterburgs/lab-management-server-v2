@@ -30,10 +30,15 @@ const morgan_1 = __importDefault(require("morgan"));
 log_1.default(statuses_1.STATUSES.INFO, "Initializing server");
 const dotenv = __importStar(require("dotenv"));
 dotenv.config();
-const UserRoutes_1 = __importDefault(require("./routes/UserRoutes"));
 const AuthRoutes_1 = __importDefault(require("./routes/AuthRoutes"));
-const SemesterRoutes_1 = __importDefault(require("./routes/SemesterRoutes"));
+const CourseRoutes_1 = __importDefault(require("./routes/CourseRoutes"));
+const LabRoutes_1 = __importDefault(require("./routes/LabRoutes"));
 const RegistrableCourseRoutes_1 = __importDefault(require("./routes/RegistrableCourseRoutes"));
+const RegistrationRoutes_1 = __importDefault(require("./routes/RegistrationRoutes"));
+const ScheduleRoutes_1 = __importDefault(require("./routes/ScheduleRoutes"));
+const SemesterRoutes_1 = __importDefault(require("./routes/SemesterRoutes"));
+const TeachingRoutes_1 = __importDefault(require("./routes/TeachingRoutes"));
+const UserRoutes_1 = __importDefault(require("./routes/UserRoutes"));
 const port = 3001;
 const app = express_1.default();
 const API_URL = process.env.API_URL;
@@ -55,10 +60,15 @@ app.get(`${API_URL}`, (req, res) => {
         message: "Welcome to Lab Management version 2",
     });
 });
-app.use(`${API_URL}/users`, UserRoutes_1.default);
 app.use(`${API_URL}/auth`, AuthRoutes_1.default);
-app.use(`${API_URL}/semesters`, SemesterRoutes_1.default);
+app.use(`${API_URL}/courses`, CourseRoutes_1.default);
+app.use(`${API_URL}/labs`, LabRoutes_1.default);
 app.use(`${API_URL}/registrable-courses`, RegistrableCourseRoutes_1.default);
+app.use(`${API_URL}/registrations`, RegistrationRoutes_1.default);
+app.use(`${API_URL}/schedules`, ScheduleRoutes_1.default);
+app.use(`${API_URL}/semesters`, SemesterRoutes_1.default);
+app.use(`${API_URL}/teachings`, TeachingRoutes_1.default);
+app.use(`${API_URL}/users`, UserRoutes_1.default);
 app.use((req, res, next) => {
     const error = new Error("Page Not Found!");
     error.code = "404";

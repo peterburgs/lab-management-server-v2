@@ -41,6 +41,10 @@ const semesterSchema = new mongoose_1.Schema({
         required: true,
         default: true,
     },
+    labSchedule: {
+        type: Array,
+        required: false,
+    },
     isHidden: {
         type: Boolean,
         required: false,

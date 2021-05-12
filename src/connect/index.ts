@@ -8,6 +8,8 @@ export default (connectionString: string) => {
         useNewUrlParser: true,
         useUnifiedTopology: true,
         dbName: "lab-management",
+        useFindAndModify: false,
+        useCreateIndex: true,
       })
       .then(() => log(STATUSES.SUCCESS, "Connected to MongoDB"))
       .catch((err) => log(STATUSES.ERROR, err.message));
