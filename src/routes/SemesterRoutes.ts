@@ -1,13 +1,11 @@
-import express, { Router, Request, Response, NextFunction } from "express";
-import mongoose from "mongoose";
+import { Router } from "express";
 import log, { message } from "../util/log";
 import { STATUSES } from "../common/statuses";
-import { ROLES, IUser, ISemester } from "../types";
+import { ROLES, ISemester } from "../types";
 import requireAuth from "../helpers/requireAuth";
 import requireRole from "../helpers/requireRoles";
 
 // Import models
-import User from "../models/User";
 import Semester from "../models/Semester";
 
 // Config router
@@ -27,7 +25,7 @@ router.get("/", (req, res, next) => {
           isHidden: false,
           ...req.query,
         }).exec();
-        if (semesters) {
+        if (semesters.length) {
           log(STATUSES.SUCCESS, "Get all semesters successfully");
           res.status(200).json({
             message: message(
@@ -71,6 +69,7 @@ router.post("/", async (req, res, next) => {
       semester = await semester.save();
       if (semester) {
         log(STATUSES.CREATED, "Create new semester successfully");
+        log(STATUSES.INFO, semester);
         res.status(201).json({
           message: message(
             STATUSES.CREATED,
@@ -111,6 +110,7 @@ router.put("/:id", async (req, res, next) => {
       ).exec();
       if (semester) {
         log(STATUSES.SUCCESS, "Update semester successfully");
+        log(STATUSES.INFO, semester);
         res.status(200).json({
           message: message(STATUSES.SUCCESS, "Update semester successfully"),
           semester,

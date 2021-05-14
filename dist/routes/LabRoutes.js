@@ -44,8 +44,9 @@ router.get("/", (req, res, next) => {
     requireRoles_1.default([types_1.ROLES.ADMIN, types_1.ROLES.LECTURER], req, res, next, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const labs = yield Lab_1.default.find(Object.assign({ isHidden: false }, req.query)).exec();
-            if (labs) {
+            if (labs.length) {
                 log_1.default(statuses_1.STATUSES.SUCCESS, "Get all labs successfully");
+                log_1.default(statuses_1.STATUSES.INFO, labs);
                 res.status(200).json({
                     message: log_1.message(statuses_1.STATUSES.SUCCESS, "Get all labs successfully"),
                     count: labs.length,
@@ -82,6 +83,7 @@ router.post("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function*
             lab = yield lab.save();
             if (lab) {
                 log_1.default(statuses_1.STATUSES.CREATED, "Create new lab successfully");
+                log_1.default(statuses_1.STATUSES.INFO, lab);
                 res.status(201).json({
                     message: log_1.message(statuses_1.STATUSES.CREATED, "Create new lab successfully"),
                     lab,
@@ -115,6 +117,7 @@ router.put("/:id", (req, res, next) => __awaiter(void 0, void 0, void 0, functio
             }, { new: true }).exec();
             if (lab) {
                 log_1.default(statuses_1.STATUSES.SUCCESS, "Update lab successfully");
+                log_1.default(statuses_1.STATUSES.INFO, lab);
                 res.status(200).json({
                     message: log_1.message(statuses_1.STATUSES.SUCCESS, "Update lab successfully"),
                     lab,
@@ -148,6 +151,7 @@ router.delete("/:id", (req, res, next) => __awaiter(void 0, void 0, void 0, func
             }, { new: true }).exec();
             if (deletedLab) {
                 log_1.default(statuses_1.STATUSES.SUCCESS, "Delete lab successfully");
+                log_1.default(statuses_1.STATUSES.INFO, deletedLab);
                 res.status(200).json({
                     message: log_1.message(statuses_1.STATUSES.SUCCESS, "Delete lab successfully"),
                     lab: deletedLab,

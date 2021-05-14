@@ -1,14 +1,11 @@
-import express, { Router, Request, Response, NextFunction } from "express";
-import mongoose from "mongoose";
+import { Router } from "express";
 import log, { message } from "../util/log";
 import { STATUSES } from "../common/statuses";
-import { ROLES, IUser, ISemester, ICourse } from "../types";
+import { ROLES, ICourse } from "../types";
 import requireAuth from "../helpers/requireAuth";
 import requireRole from "../helpers/requireRoles";
 
 // Import models
-import User from "../models/User";
-import Semester from "../models/Semester";
 import Course from "../models/Course";
 
 // Config router
@@ -28,8 +25,9 @@ router.get("/", (req, res, next) => {
           isHidden: false,
           ...req.query,
         }).exec();
-        if (courses) {
+        if (courses.length) {
           log(STATUSES.SUCCESS, "Get all courses successfully");
+          log(STATUSES.INFO, courses);
           res.status(200).json({
             message: message(STATUSES.SUCCESS, "Get all courses successfully"),
             count: courses.length,
@@ -59,6 +57,7 @@ router.get("/", (req, res, next) => {
 router.post("/", async (req, res, next) => {
   requireRole([ROLES.ADMIN], req, res, next, async (req, res, next) => {
     let course: ICourse = new Course({
+      _id: req.body._id,
       courseName: req.body.courseName,
       numberOfCredits: req.body.numberOfCredits,
       isHidden: req.body.isHidden,
@@ -67,6 +66,7 @@ router.post("/", async (req, res, next) => {
       course = await course.save();
       if (course) {
         log(STATUSES.CREATED, "Create new course successfully");
+        log(STATUSES.INFO, course);
         res.status(201).json({
           message: message(STATUSES.CREATED, "Create new course successfully"),
           course,
@@ -104,6 +104,7 @@ router.put("/:id", async (req, res, next) => {
       ).exec();
       if (course) {
         log(STATUSES.SUCCESS, "Update course successfully");
+        log(STATUSES.INFO, course);
         res.status(200).json({
           message: message(STATUSES.SUCCESS, "Update course successfully"),
           course,
@@ -141,6 +142,7 @@ router.delete("/:id", async (req, res, next) => {
       ).exec();
       if (deletedCourse) {
         log(STATUSES.SUCCESS, "Delete course successfully");
+        log(STATUSES.INFO, deletedCourse);
         res.status(200).json({
           message: message(STATUSES.SUCCESS, "Delete course successfully"),
           course: deletedCourse,

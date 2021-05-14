@@ -60,6 +60,7 @@ router.get("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function* 
                 verifiedUser: {
                     fullName: user.fullName,
                     email: user.email,
+                    _id: user._id,
                 },
                 avatarUrl: req.body.user.picture,
                 verifiedRole: req.query.role,

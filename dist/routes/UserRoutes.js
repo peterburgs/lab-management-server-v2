@@ -44,8 +44,9 @@ router.get("/", (req, res, next) => {
     requireRoles_1.default([types_1.ROLES.ADMIN], req, res, next, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const users = yield User_1.default.find(Object.assign({ isHidden: false }, req.query)).exec();
-            if (users) {
+            if (users.length) {
                 log_1.default(statuses_1.STATUSES.SUCCESS, "Get all users successfully");
+                log_1.default(statuses_1.STATUSES.INFO, users);
                 res.status(200).json({
                     message: log_1.message(statuses_1.STATUSES.SUCCESS, "Get all users successfully"),
                     count: users.length,
@@ -84,6 +85,7 @@ router.post("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function*
             user = yield user.save();
             if (user) {
                 log_1.default(statuses_1.STATUSES.CREATED, "Create new user successfully");
+                log_1.default(statuses_1.STATUSES.INFO, user);
                 res.status(201).json({
                     message: log_1.message(statuses_1.STATUSES.CREATED, "Create new user successfully"),
                     user,
@@ -143,6 +145,7 @@ router.delete("/:id", (req, res, next) => __awaiter(void 0, void 0, void 0, func
             }, { new: true }).exec();
             if (deletedUser) {
                 log_1.default(statuses_1.STATUSES.SUCCESS, "Delete user successfully");
+                log_1.default(statuses_1.STATUSES.INFO, deletedUser);
                 res.status(200).json({
                     message: log_1.message(statuses_1.STATUSES.SUCCESS, "Delete user successfully"),
                     user: deletedUser,

@@ -71,11 +71,6 @@ const teachingSchema = new mongoose_1.Schema({
         ref: "Registration",
         required: true,
     },
-    semester: {
-        type: String,
-        ref: "Semester",
-        required: true,
-    },
     theoryRoom: {
         type: String,
         required: true,

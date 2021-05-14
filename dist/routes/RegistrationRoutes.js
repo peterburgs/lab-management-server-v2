@@ -37,7 +37,6 @@ const statuses_1 = require("../common/statuses");
 const types_1 = require("../types");
 const requireAuth_1 = __importDefault(require("../helpers/requireAuth"));
 const requireRoles_1 = __importDefault(require("../helpers/requireRoles"));
-const Course_1 = __importDefault(require("../models/Course"));
 const Registration_1 = __importDefault(require("../models/Registration"));
 const router = express_1.Router();
 router.use(requireAuth_1.default);
@@ -45,8 +44,9 @@ router.get("/", (req, res, next) => {
     requireRoles_1.default([types_1.ROLES.ADMIN, types_1.ROLES.LECTURER], req, res, next, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const registrations = yield Registration_1.default.find(Object.assign({ isHidden: false }, req.query)).exec();
-            if (registrations) {
+            if (registrations.length) {
                 log_1.default(statuses_1.STATUSES.SUCCESS, "Get all registrations successfully");
+                log_1.default(statuses_1.STATUSES.INFO, registrations);
                 res.status(200).json({
                     message: log_1.message(statuses_1.STATUSES.SUCCESS, "Get all registrations successfully"),
                     count: registrations.length,
@@ -86,6 +86,7 @@ router.post("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function*
             registration = yield registration.save();
             if (registration) {
                 log_1.default(statuses_1.STATUSES.CREATED, "Create new registration successfully");
+                log_1.default(statuses_1.STATUSES.INFO, registration);
                 res.status(201).json({
                     message: log_1.message(statuses_1.STATUSES.CREATED, "Create new registration successfully"),
                     registration,
@@ -119,6 +120,7 @@ router.put("/:id", (req, res, next) => __awaiter(void 0, void 0, void 0, functio
             }, { new: true }).exec();
             if (registration) {
                 log_1.default(statuses_1.STATUSES.SUCCESS, "Update registration successfully");
+                log_1.default(statuses_1.STATUSES.INFO, registration);
                 res.status(200).json({
                     message: log_1.message(statuses_1.STATUSES.SUCCESS, "Update registration successfully"),
                     registration,
@@ -137,39 +139,6 @@ router.put("/:id", (req, res, next) => __awaiter(void 0, void 0, void 0, functio
             res.status(500).json({
                 message: log_1.message(statuses_1.STATUSES.ERROR, error.message),
                 registration: null,
-            });
-        }
-    }));
-}));
-router.delete("/:id", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    requireRoles_1.default([types_1.ROLES.ADMIN], req, res, next, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-        try {
-            const deletedCourse = yield Course_1.default.findByIdAndUpdate({
-                _id: req.params.id,
-                isHidden: false,
-            }, {
-                $set: { isHidden: true },
-            }, { new: true }).exec();
-            if (deletedCourse) {
-                log_1.default(statuses_1.STATUSES.SUCCESS, "Delete course successfully");
-                res.status(200).json({
-                    message: log_1.message(statuses_1.STATUSES.SUCCESS, "Delete course successfully"),
-                    course: deletedCourse,
-                });
-            }
-            else {
-                log_1.default(statuses_1.STATUSES.ERROR, "Cannot delete course");
-                res.status(500).json({
-                    message: log_1.message(statuses_1.STATUSES.ERROR, "Cannot delete course"),
-                    course: null,
-                });
-            }
-        }
-        catch (error) {
-            log_1.default(statuses_1.STATUSES.ERROR, "Cannot delete course");
-            res.status(500).json({
-                message: log_1.message(statuses_1.STATUSES.ERROR, error.message),
-                course: null,
             });
         }
     }));

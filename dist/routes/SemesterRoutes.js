@@ -44,7 +44,7 @@ router.get("/", (req, res, next) => {
     requireRoles_1.default([types_1.ROLES.ADMIN, types_1.ROLES.LECTURER], req, res, next, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const semesters = yield Semester_1.default.find(Object.assign({ isHidden: false }, req.query)).exec();
-            if (semesters) {
+            if (semesters.length) {
                 log_1.default(statuses_1.STATUSES.SUCCESS, "Get all semesters successfully");
                 res.status(200).json({
                     message: log_1.message(statuses_1.STATUSES.SUCCESS, "Get all semesters successfully"),
@@ -84,6 +84,7 @@ router.post("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function*
             semester = yield semester.save();
             if (semester) {
                 log_1.default(statuses_1.STATUSES.CREATED, "Create new semester successfully");
+                log_1.default(statuses_1.STATUSES.INFO, semester);
                 res.status(201).json({
                     message: log_1.message(statuses_1.STATUSES.CREATED, "Create new semester successfully"),
                     semester,
@@ -117,6 +118,7 @@ router.put("/:id", (req, res, next) => __awaiter(void 0, void 0, void 0, functio
             }, { new: true }).exec();
             if (semester) {
                 log_1.default(statuses_1.STATUSES.SUCCESS, "Update semester successfully");
+                log_1.default(statuses_1.STATUSES.INFO, semester);
                 res.status(200).json({
                     message: log_1.message(statuses_1.STATUSES.SUCCESS, "Update semester successfully"),
                     semester,

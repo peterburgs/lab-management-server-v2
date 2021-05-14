@@ -53,11 +53,6 @@ const teachingSchema: Schema = new Schema(
       ref: "Registration",
       required: true,
     },
-    semester: {
-      type: String,
-      ref: "Semester",
-      required: true,
-    },
     theoryRoom: {
       type: String,
       required: true,
