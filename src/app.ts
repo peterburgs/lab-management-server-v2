@@ -33,7 +33,7 @@ connect(process.env.CONNECTION_STRING!.toString());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
-  morgan("Method=:method |URL= :url |Status= :status | :response-time ms")
+  morgan("Method=:method |URL= :url |Status= :status | :response-time ms\n")
 );
 
 // Prevent CORS errors

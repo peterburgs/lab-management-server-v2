@@ -19,6 +19,7 @@ import Semester from "../models/Semester";
 import Course from "../models/Course";
 import Registration from "../models/Registration";
 import Teaching from "../models/Teaching";
+import { stringify } from "querystring";
 
 // Config router
 const router = Router();
@@ -71,10 +72,12 @@ router.get("/", (req, res, next) => {
 router.post("/", async (req, res, next) => {
   requireRole([ROLES.LECTURER], req, res, next, async (req, res, next) => {
     let teaching: ITeaching = new Teaching({
+      user: req.body.uId,
       course: req.body.course,
       group: req.body.group,
+      registration: req.body.registration,
       numberOfStudents: req.body.numberOfStudents,
-      theoryRom: req.body.theoryRom,
+      theoryRoom: req.body.theoryRoom,
       numberOfPracticalWeeks: req.body.numberOfPracticalWeeks,
       dayOfWeek: req.body.dayOfWeek,
       startPeriod: req.body.startPeriod,
@@ -85,6 +88,7 @@ router.post("/", async (req, res, next) => {
       teaching = await teaching.save();
       if (teaching) {
         log(STATUSES.CREATED, "Create new teaching successfully");
+        log(STATUSES.INFO, teaching);
         res.status(201).json({
           message: message(
             STATUSES.CREATED,
@@ -132,8 +136,10 @@ router.post("/bulk", async (req, res, next) => {
           let teaching: ITeaching = new Teaching({
             course: teachings[index].course,
             group: teachings[index].group,
+            registration: teachings[index].registration,
+            user: teachings[index].user,
             numberOfStudents: teachings[index].numberOfStudents,
-            theoryRom: teachings[index].theoryRom,
+            theoryRoom: teachings[index].theoryRoom,
             numberOfPracticalWeeks: teachings[index].numberOfPracticalWeeks,
             dayOfWeek: teachings[index].dayOfWeek,
             startPeriod: teachings[index].startPeriod,
@@ -152,6 +158,7 @@ router.post("/bulk", async (req, res, next) => {
         }
         await session.commitTransaction();
         log(STATUSES.SUCCESS, "Create new teaching successfully");
+        log(STATUSES.INFO, teachings);
         res.status(201).json({
           message: message(
             STATUSES.SUCCESS,

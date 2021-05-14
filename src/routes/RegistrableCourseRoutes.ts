@@ -39,7 +39,7 @@ router.get("/", (req, res, next) => {
           isHidden: false,
           ...req.query,
         }).exec();
-        if (registrableCourses) {
+        if (registrableCourses.length) {
           log(STATUSES.SUCCESS, "Get all Registrable Courses successfully");
           res.status(200).json({
             message: message(
@@ -70,7 +70,7 @@ router.get("/", (req, res, next) => {
 });
 
 // POST method: create list of registrable courses
-router.post("/", async (req, res, next) => {
+router.post("/bulk", async (req, res, next) => {
   requireRole([ROLES.ADMIN], req, res, next, async (req, res, next) => {
     let registrableCourses = req.body.registrableCourses;
     const session = await mongoose.startSession();
@@ -150,6 +150,8 @@ router.post("/", async (req, res, next) => {
         "Create Registrable courses successfully"
       ),
     });
+    log(STATUSES.SUCCESS, "Create Registrable courses successfully");
+    log(STATUSES.INFO, registrableCourses);
   });
 });
 

@@ -76,10 +76,12 @@ router.get("/", (req, res, next) => {
 router.post("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     requireRoles_1.default([types_1.ROLES.LECTURER], req, res, next, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         let teaching = new Teaching_1.default({
+            user: req.body.uId,
             course: req.body.course,
             group: req.body.group,
+            registration: req.body.registration,
             numberOfStudents: req.body.numberOfStudents,
-            theoryRom: req.body.theoryRom,
+            theoryRoom: req.body.theoryRoom,
             numberOfPracticalWeeks: req.body.numberOfPracticalWeeks,
             dayOfWeek: req.body.dayOfWeek,
             startPeriod: req.body.startPeriod,
@@ -90,6 +92,7 @@ router.post("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function*
             teaching = yield teaching.save();
             if (teaching) {
                 log_1.default(statuses_1.STATUSES.CREATED, "Create new teaching successfully");
+                log_1.default(statuses_1.STATUSES.INFO, teaching);
                 res.status(201).json({
                     message: log_1.message(statuses_1.STATUSES.CREATED, "Create new teaching successfully"),
                     teaching,
@@ -129,8 +132,10 @@ router.post("/bulk", (req, res, next) => __awaiter(void 0, void 0, void 0, funct
                     let teaching = new Teaching_1.default({
                         course: teachings[index].course,
                         group: teachings[index].group,
+                        registration: teachings[index].registration,
+                        user: teachings[index].user,
                         numberOfStudents: teachings[index].numberOfStudents,
-                        theoryRom: teachings[index].theoryRom,
+                        theoryRoom: teachings[index].theoryRoom,
                         numberOfPracticalWeeks: teachings[index].numberOfPracticalWeeks,
                         dayOfWeek: teachings[index].dayOfWeek,
                         startPeriod: teachings[index].startPeriod,
@@ -149,6 +154,7 @@ router.post("/bulk", (req, res, next) => __awaiter(void 0, void 0, void 0, funct
                 }
                 yield session.commitTransaction();
                 log_1.default(statuses_1.STATUSES.SUCCESS, "Create new teaching successfully");
+                log_1.default(statuses_1.STATUSES.INFO, teachings);
                 res.status(201).json({
                     message: log_1.message(statuses_1.STATUSES.SUCCESS, "Create new Teaching successfully"),
                     teachings,

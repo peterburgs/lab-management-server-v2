@@ -1,15 +1,11 @@
-import express, { Router, Request, Response, NextFunction } from "express";
-import mongoose from "mongoose";
+import { Router } from "express";
 import log, { message } from "../util/log";
 import { STATUSES } from "../common/statuses";
-import { ROLES, IUser, ISemester, ICourse, IRegistration } from "../types";
+import { ROLES, IRegistration } from "../types";
 import requireAuth from "../helpers/requireAuth";
 import requireRole from "../helpers/requireRoles";
 
 // Import models
-import User from "../models/User";
-import Semester from "../models/Semester";
-import Course from "../models/Course";
 import Registration from "../models/Registration";
 
 // Config router
@@ -29,8 +25,10 @@ router.get("/", (req, res, next) => {
           isHidden: false,
           ...req.query,
         }).exec();
-        if (registrations) {
+        if (registrations.length) {
           log(STATUSES.SUCCESS, "Get all registrations successfully");
+          log(STATUSES.INFO, registrations);
+
           res.status(200).json({
             message: message(
               STATUSES.SUCCESS,
@@ -74,6 +72,7 @@ router.post("/", async (req, res, next) => {
       registration = await registration.save();
       if (registration) {
         log(STATUSES.CREATED, "Create new registration successfully");
+        log(STATUSES.INFO, registration);
         res.status(201).json({
           message: message(
             STATUSES.CREATED,
@@ -114,6 +113,7 @@ router.put("/:id", async (req, res, next) => {
       ).exec();
       if (registration) {
         log(STATUSES.SUCCESS, "Update registration successfully");
+        log(STATUSES.INFO, registration);
         res.status(200).json({
           message: message(
             STATUSES.SUCCESS,
@@ -133,43 +133,6 @@ router.put("/:id", async (req, res, next) => {
       res.status(500).json({
         message: message(STATUSES.ERROR, error.message),
         registration: null,
-      });
-    }
-  });
-});
-
-// DELETE method: delete a course
-router.delete("/:id", async (req, res, next) => {
-  requireRole([ROLES.ADMIN], req, res, next, async (req, res, next) => {
-    try {
-      const deletedCourse = await Course.findByIdAndUpdate(
-        {
-          _id: req.params.id,
-          isHidden: false,
-        },
-        {
-          $set: { isHidden: true },
-        },
-        { new: true }
-      ).exec();
-      if (deletedCourse) {
-        log(STATUSES.SUCCESS, "Delete course successfully");
-        res.status(200).json({
-          message: message(STATUSES.SUCCESS, "Delete course successfully"),
-          course: deletedCourse,
-        });
-      } else {
-        log(STATUSES.ERROR, "Cannot delete course");
-        res.status(500).json({
-          message: message(STATUSES.ERROR, "Cannot delete course"),
-          course: null,
-        });
-      }
-    } catch (error) {
-      log(STATUSES.ERROR, "Cannot delete course");
-      res.status(500).json({
-        message: message(STATUSES.ERROR, error.message),
-        course: null,
       });
     }
   });

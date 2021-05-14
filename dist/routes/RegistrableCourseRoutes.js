@@ -47,7 +47,7 @@ router.get("/", (req, res, next) => {
     requireRoles_1.default([types_1.ROLES.ADMIN, types_1.ROLES.LECTURER], req, res, next, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const registrableCourses = yield RegistrableCourse_1.default.find(Object.assign({ isHidden: false }, req.query)).exec();
-            if (registrableCourses) {
+            if (registrableCourses.length) {
                 log_1.default(statuses_1.STATUSES.SUCCESS, "Get all Registrable Courses successfully");
                 res.status(200).json({
                     message: log_1.message(statuses_1.STATUSES.SUCCESS, "Get all Registrable Courses successfully"),
@@ -74,7 +74,7 @@ router.get("/", (req, res, next) => {
         }
     }));
 });
-router.post("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/bulk", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     requireRoles_1.default([types_1.ROLES.ADMIN], req, res, next, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         let registrableCourses = req.body.registrableCourses;
         const session = yield mongoose_1.default.startSession();
@@ -137,6 +137,8 @@ router.post("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function*
         res.status(201).json({
             message: log_1.message(statuses_1.STATUSES.CREATED, "Create Registrable courses successfully"),
         });
+        log_1.default(statuses_1.STATUSES.SUCCESS, "Create Registrable courses successfully");
+        log_1.default(statuses_1.STATUSES.INFO, registrableCourses);
     }));
 }));
 exports.default = router;

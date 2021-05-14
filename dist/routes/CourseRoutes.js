@@ -44,8 +44,9 @@ router.get("/", (req, res, next) => {
     requireRoles_1.default([types_1.ROLES.ADMIN, types_1.ROLES.LECTURER], req, res, next, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const courses = yield Course_1.default.find(Object.assign({ isHidden: false }, req.query)).exec();
-            if (courses) {
+            if (courses.length) {
                 log_1.default(statuses_1.STATUSES.SUCCESS, "Get all courses successfully");
+                log_1.default(statuses_1.STATUSES.INFO, courses);
                 res.status(200).json({
                     message: log_1.message(statuses_1.STATUSES.SUCCESS, "Get all courses successfully"),
                     count: courses.length,
@@ -74,6 +75,7 @@ router.get("/", (req, res, next) => {
 router.post("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     requireRoles_1.default([types_1.ROLES.ADMIN], req, res, next, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         let course = new Course_1.default({
+            _id: req.body._id,
             courseName: req.body.courseName,
             numberOfCredits: req.body.numberOfCredits,
             isHidden: req.body.isHidden,
@@ -82,6 +84,7 @@ router.post("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function*
             course = yield course.save();
             if (course) {
                 log_1.default(statuses_1.STATUSES.CREATED, "Create new course successfully");
+                log_1.default(statuses_1.STATUSES.INFO, course);
                 res.status(201).json({
                     message: log_1.message(statuses_1.STATUSES.CREATED, "Create new course successfully"),
                     course,
@@ -115,6 +118,7 @@ router.put("/:id", (req, res, next) => __awaiter(void 0, void 0, void 0, functio
             }, { new: true }).exec();
             if (course) {
                 log_1.default(statuses_1.STATUSES.SUCCESS, "Update course successfully");
+                log_1.default(statuses_1.STATUSES.INFO, course);
                 res.status(200).json({
                     message: log_1.message(statuses_1.STATUSES.SUCCESS, "Update course successfully"),
                     course,
@@ -148,6 +152,7 @@ router.delete("/:id", (req, res, next) => __awaiter(void 0, void 0, void 0, func
             }, { new: true }).exec();
             if (deletedCourse) {
                 log_1.default(statuses_1.STATUSES.SUCCESS, "Delete course successfully");
+                log_1.default(statuses_1.STATUSES.INFO, deletedCourse);
                 res.status(200).json({
                     message: log_1.message(statuses_1.STATUSES.SUCCESS, "Delete course successfully"),
                     course: deletedCourse,

@@ -1,23 +1,11 @@
-import express, { Router, Request, Response, NextFunction } from "express";
-import mongoose from "mongoose";
+import { Router } from "express";
 import log, { message } from "../util/log";
 import { STATUSES } from "../common/statuses";
-import {
-  ROLES,
-  IUser,
-  ISemester,
-  ICourse,
-  IRegistration,
-  ILab,
-} from "../types";
+import { ROLES, ILab } from "../types";
 import requireAuth from "../helpers/requireAuth";
 import requireRole from "../helpers/requireRoles";
 
 // Import models
-import User from "../models/User";
-import Semester from "../models/Semester";
-import Course from "../models/Course";
-import Registration from "../models/Registration";
 import Lab from "../models/Lab";
 
 // Config router
@@ -37,8 +25,9 @@ router.get("/", (req, res, next) => {
           isHidden: false,
           ...req.query,
         }).exec();
-        if (labs) {
+        if (labs.length) {
           log(STATUSES.SUCCESS, "Get all labs successfully");
+          log(STATUSES.INFO, labs);
           res.status(200).json({
             message: message(STATUSES.SUCCESS, "Get all labs successfully"),
             count: labs.length,
@@ -76,6 +65,7 @@ router.post("/", async (req, res, next) => {
       lab = await lab.save();
       if (lab) {
         log(STATUSES.CREATED, "Create new lab successfully");
+        log(STATUSES.INFO, lab);
         res.status(201).json({
           message: message(STATUSES.CREATED, "Create new lab successfully"),
           lab,
@@ -113,6 +103,7 @@ router.put("/:id", async (req, res, next) => {
       ).exec();
       if (lab) {
         log(STATUSES.SUCCESS, "Update lab successfully");
+        log(STATUSES.INFO, lab);
         res.status(200).json({
           message: message(STATUSES.SUCCESS, "Update lab successfully"),
           lab,
@@ -150,6 +141,7 @@ router.delete("/:id", async (req, res, next) => {
       ).exec();
       if (deletedLab) {
         log(STATUSES.SUCCESS, "Delete lab successfully");
+        log(STATUSES.INFO, deletedLab);
         res.status(200).json({
           message: message(STATUSES.SUCCESS, "Delete lab successfully"),
           lab: deletedLab,

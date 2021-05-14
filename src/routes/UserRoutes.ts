@@ -18,8 +18,9 @@ router.get("/", (req, res, next) => {
   requireRole([ROLES.ADMIN], req, res, next, async (req, res, next) => {
     try {
       const users = await User.find({ isHidden: false, ...req.query }).exec();
-      if (users) {
+      if (users.length) {
         log(STATUSES.SUCCESS, "Get all users successfully");
+        log(STATUSES.INFO, users);
         res.status(200).json({
           message: message(STATUSES.SUCCESS, "Get all users successfully"),
           count: users.length,
@@ -58,6 +59,7 @@ router.post("/", async (req, res, next) => {
       user = await user.save();
       if (user) {
         log(STATUSES.CREATED, "Create new user successfully");
+        log(STATUSES.INFO, user);
         res.status(201).json({
           message: message(STATUSES.CREATED, "Create new user successfully"),
           user,
@@ -126,6 +128,7 @@ router.delete("/:id", async (req, res, next) => {
       ).exec();
       if (deletedUser) {
         log(STATUSES.SUCCESS, "Delete user successfully");
+        log(STATUSES.INFO, deletedUser);
         res.status(200).json({
           message: message(STATUSES.SUCCESS, "Delete user successfully"),
           user: deletedUser,

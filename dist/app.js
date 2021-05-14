@@ -45,7 +45,7 @@ const API_URL = process.env.API_URL;
 connect_1.default(process.env.CONNECTION_STRING.toString());
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
-app.use(morgan_1.default("Method=:method |URL= :url |Status= :status | :response-time ms"));
+app.use(morgan_1.default("Method=:method |URL= :url |Status= :status | :response-time ms\n"));
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
     res.header("Access-Control-Allow-Origin", "*");
