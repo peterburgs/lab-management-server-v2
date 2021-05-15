@@ -35,13 +35,14 @@ const express_1 = require("express");
 const log_1 = __importStar(require("../util/log"));
 const statuses_1 = require("../common/statuses");
 const types_1 = require("../types");
-const scheduleGeneration_1 = __importDefault(require("../util/scheduleGeneration"));
+const scheduleGenerationV2_1 = __importDefault(require("../util/scheduleGenerationV2"));
 const requireAuth_1 = __importDefault(require("../helpers/requireAuth"));
 const requireRoles_1 = __importDefault(require("../helpers/requireRoles"));
 const Semester_1 = __importDefault(require("../models/Semester"));
 const Teaching_1 = __importDefault(require("../models/Teaching"));
 const LabUsage_1 = __importDefault(require("../models/LabUsage"));
 const Lab_1 = __importDefault(require("../models/Lab"));
+const Registration_1 = __importDefault(require("../models/Registration"));
 const router = express_1.Router();
 router.use(requireAuth_1.default);
 router.get("/", (req, res, next) => {
@@ -78,23 +79,20 @@ router.get("/", (req, res, next) => {
 router.post("/generate", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     requireRoles_1.default([types_1.ROLES.ADMIN], req, res, next, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const registration = req.body.registration;
-            const isNew = req.body.isNew;
+            let registration = yield Registration_1.default.findById({
+                _id: req.body.registration,
+            });
             yield LabUsage_1.default.deleteMany({});
             let labs = yield Lab_1.default.find({ isHidden: false });
             let teachings = yield Teaching_1.default.find({
-                registration: registration,
+                registration: registration._id,
                 isHidden: false,
             });
-            let semester = yield Semester_1.default.findById({ _id: registration.semester });
-            const _schedule = yield scheduleGeneration_1.default(labs, teachings, semester._id, semester.numberOfWeeks, types_1.PERIOD.FIFTEEN, isNew);
-            if (!_schedule) {
-                return res.status(500).json({
-                    message: log_1.message(statuses_1.STATUSES.ERROR, "Cannot create schedule"),
-                    schedule: null,
-                });
-            }
-            return res.status(201).json({
+            let semester = yield Semester_1.default.findById({
+                _id: registration.semester,
+            });
+            let _schedule = yield scheduleGenerationV2_1.default(labs, teachings, semester._id, semester.numberOfWeeks, types_1.PERIOD.FIFTEEN);
+            res.status(201).json({
                 message: log_1.message(statuses_1.STATUSES.SUCCESS, "Create schedule successfully"),
                 schedule: null,
             });
