@@ -33,7 +33,7 @@ const scheduleGenerationV2 = (labs, teachings, semesterId, numberOfWeeks, number
             labQueue.sort((a, b) => b.capacity - a.capacity);
             let { labSchedule } = semester;
             if (!labSchedule || labSchedule.length <= 0) {
-                labSchedule = Array(labs.length * numberOfPeriods)
+                labSchedule = Array(labs.length * numberOfPeriods + 1)
                     .fill(0)
                     .map(() => Array(numberOfWeeks * 7).fill(0));
             }

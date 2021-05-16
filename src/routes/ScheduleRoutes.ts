@@ -137,26 +137,62 @@ router.post("/", async (req, res, next) => {
 router.put("/:id", async (req, res, next) => {
   requireRole([ROLES.ADMIN], req, res, next, async (req, res, next) => {
     try {
-      let labUsage = await LabUsage.findByIdAndUpdate(
+      // TODO: Find old lab usage
+      let oldLabUsage = await LabUsage.findById({
+        _id: req.params.id,
+        isHidden: false,
+      });
+      // TODO: get lab schedule
+      let semester = await Semester.findById({
+        _id: oldLabUsage!.semester,
+        isHidden: false,
+      });
+      let { labSchedule } = semester!;
+      // TODO: get all labs
+      let labs = await Lab.find({ isHidden: false });
+      labs.sort((a, b) => b.capacity - a.capacity);
+      // TODO: change 1 values to zero
+      for (let i = oldLabUsage!.startPeriod; i <= oldLabUsage!.endPeriod; i++) {
+        labSchedule[
+          i + 15 * labs.findIndex((lab) => lab._id == oldLabUsage!.lab)
+        ][oldLabUsage!.weekNo * 7 + oldLabUsage!.dayOfWeek] = 0;
+      }
+
+      // TODO: Find new lab usage
+      let newLabUsage = await LabUsage.findByIdAndUpdate(
         {
           _id: req.params.id,
           isHidden: false,
         },
-        {
-          $set: req.body,
-        },
+        { $set: req.body },
         { new: true }
-      ).exec();
-      if (labUsage) {
-        log(STATUSES.SUCCESS, "Update labUsage successfully");
+      );
+
+      // TODO: change 0 values to 1
+      for (let i = newLabUsage!.startPeriod; i <= newLabUsage!.endPeriod; i++) {
+        labSchedule[
+          i + 15 * labs.findIndex((lab) => lab._id == newLabUsage!.lab)
+        ][newLabUsage!.weekNo * 7 + newLabUsage!.dayOfWeek] = 1;
+      }
+      // TODO: update
+      semester!.labSchedule = labSchedule;
+      semester = await semester!.save();
+      if (semester) {
+        log(STATUSES.SUCCESS, "Update semester, lab schedule successfully");
         res.status(200).json({
-          message: message(STATUSES.SUCCESS, "Update labUsage successfully"),
-          labUsage,
+          message: message(
+            STATUSES.SUCCESS,
+            "Update semester, lab schedule successfully"
+          ),
+          labUsage: newLabUsage,
         });
       } else {
-        log(STATUSES.ERROR, "Cannot update labUsage");
-        res.status(422).json({
-          message: message(STATUSES.ERROR, "Cannot update labUsage"),
+        log(STATUSES.ERROR, "Cannot update semester, lab schedule");
+        res.status(200).json({
+          message: message(
+            STATUSES.ERROR,
+            "Cannot update semester, lab schedule successfully"
+          ),
           labUsage: null,
         });
       }
