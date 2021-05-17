@@ -119,16 +119,44 @@ router.post("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function*
         });
         try {
             labUsage = yield labUsage.save();
-            if (!labUsage) {
+            if (labUsage) {
+                let semester = yield Semester_1.default.findById({
+                    _id: labUsage.semester,
+                    isHidden: false,
+                });
+                let labs = yield Lab_1.default.find({ isHidden: false });
+                labs.sort((a, b) => b.capacity - a.capacity);
+                let { labSchedule } = semester;
+                for (let i = labUsage.startPeriod; i <= labUsage.endPeriod; i++) {
+                    labSchedule[i + 15 * labs.findIndex((lab) => lab._id == labUsage.lab)][labUsage.weekNo * 7 + labUsage.dayOfWeek] = 1;
+                }
+                semester.labSchedule = labSchedule;
+                semester = yield semester.save();
+                if (semester) {
+                    log_1.default(statuses_1.STATUSES.SUCCESS, "Update semester, lab schedule successfully");
+                    res.status(200).json({
+                        message: log_1.message(statuses_1.STATUSES.SUCCESS, "Update semester, lab schedule successfully"),
+                        labUsage: labUsage,
+                    });
+                }
+                else {
+                    log_1.default(statuses_1.STATUSES.ERROR, "Cannot update semester, lab schedule");
+                    res.status(200).json({
+                        message: log_1.message(statuses_1.STATUSES.ERROR, "Cannot update semester, lab schedule successfully"),
+                        labUsage: null,
+                    });
+                    return res.status(201).json({
+                        message: log_1.message(statuses_1.STATUSES.SUCCESS, "Create new lab usage successfully"),
+                        labUsage,
+                    });
+                }
+            }
+            else {
                 return res.status(500).json({
                     message: log_1.message(statuses_1.STATUSES.ERROR, "Cannot create lab usage"),
                     labUsage: null,
                 });
             }
-            return res.status(201).json({
-                message: log_1.message(statuses_1.STATUSES.SUCCESS, "Create new lab usage successfully"),
-                labUsage,
-            });
         }
         catch (error) {
             res.status(500).json({

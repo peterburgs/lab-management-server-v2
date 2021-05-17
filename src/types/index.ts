@@ -1,4 +1,8 @@
 import { Document } from "mongoose";
+import { REQUEST_STATUSES } from "../common/requestStatuses";
+import { REQUEST_TYPES } from "../common/requestTypes";
+import { ACTIONS } from "../common/actions";
+import { MODELS } from "../common/models";
 export enum ROLES {
   ADMIN,
   LECTURER,
@@ -38,6 +42,7 @@ export interface IUser extends Document {
   fullName: string;
   roles: ROLES[];
   isHidden: boolean;
+  avatarUrl: string;
 }
 
 export interface ISemester extends Document {
@@ -94,4 +99,33 @@ export interface ILabUsage extends Document {
   endPeriod: number;
   isHidden: boolean;
   semester: string;
+}
+export interface IRequest extends Document {
+  lab: string;
+  status: REQUEST_STATUSES;
+  user: string;
+  weekNo: number;
+  dayOfWeek: number;
+  startPeriod: number;
+  endPeriod: number;
+  labUsage: string;
+  teaching: string;
+  title: string;
+  description: string;
+  type: REQUEST_TYPES;
+  isHidden: boolean;
+}
+
+export interface IComment extends Document {
+  user: string;
+  request: string;
+  text: string;
+  isHidden: boolean;
+}
+
+export interface ISystemlog extends Document {
+  user: string;
+  action: ACTIONS;
+  models: MODELS;
+  modelId: string;
 }
