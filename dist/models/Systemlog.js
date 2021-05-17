@@ -20,28 +20,64 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-const userSchema = new mongoose_1.Schema({
-    _id: {
+const requestStatuses_1 = require("../common/requestStatuses");
+const requestTypes_1 = require("../common/requestTypes");
+const systemlogSchema = new mongoose_1.Schema({
+    lab: {
+        type: String,
+        ref: "Lab",
+        required: true,
+    },
+    status: {
+        type: requestStatuses_1.REQUEST_STATUSES,
+        required: true,
+    },
+    user: {
+        type: String,
+        ref: "User",
+        required: true,
+    },
+    weekNo: {
+        type: Number,
+        required: true,
+        min: 0,
+    },
+    dayOfWeek: {
+        type: Number,
+        required: true,
+        min: 0,
+    },
+    startPeriod: {
+        type: Number,
+        required: true,
+        min: 0,
+    },
+    endPeriod: {
+        type: Number,
+        required: true,
+        min: 0,
+    },
+    labUsage: {
+        type: String,
+        ref: "LabUsage",
+        required: true,
+    },
+    teaching: {
+        type: String,
+        ref: "Teaching",
+        required: true,
+    },
+    title: {
         type: String,
         required: true,
     },
-    email: {
+    description: {
         type: String,
         required: true,
-        unique: true,
     },
-    fullName: {
-        type: String,
-        required: false,
-        default: "New User",
-    },
-    roles: {
-        type: [Number],
+    type: {
+        type: requestTypes_1.REQUEST_TYPES,
         required: true,
-    },
-    avatarUrl: {
-        type: String,
-        required: false,
     },
     isHidden: {
         type: Boolean,
@@ -49,4 +85,4 @@ const userSchema = new mongoose_1.Schema({
         default: false,
     },
 }, { timestamps: true });
-exports.default = mongoose_1.default.model("User", userSchema);
+exports.default = mongoose_1.default.model("Systemlog", systemlogSchema);

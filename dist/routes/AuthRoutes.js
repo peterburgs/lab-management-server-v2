@@ -40,7 +40,7 @@ const router = express_1.Router();
 router.use(requireAuth_1.default);
 router.get("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const user = yield User_1.default.findOne({
+        let user = yield User_1.default.findOne({
             email: req.body.user.email,
             isHidden: false,
         });
@@ -56,6 +56,11 @@ router.get("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function* 
         }
         if (user.roles.includes(Number(req.query.role))) {
             log_1.default(statuses_1.STATUSES.INFO, req.body.user);
+            if (!user.avatarUrl) {
+                user.avatarUrl = req.body.user.picture;
+                console.log(user.avatarUrl);
+            }
+            user = yield user.save();
             res.status(200).json({
                 verifiedUser: {
                     fullName: user.fullName,

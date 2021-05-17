@@ -4,6 +4,8 @@ import connect from "./connect";
 import log from "./util/log";
 import { STATUSES } from "./common/statuses";
 import morgan from "morgan";
+import cors from "cors";
+
 // Notify
 log(STATUSES.INFO, "Initializing server");
 // Env
@@ -20,6 +22,9 @@ import scheduleRoutes from "./routes/ScheduleRoutes";
 import semesterRoutes from "./routes/SemesterRoutes";
 import teachingRoutes from "./routes/TeachingRoutes";
 import userRoutes from "./routes/UserRoutes";
+import requestRoutes from "./routes/RequestRoutes";
+import commentRoutes from "./routes/CommentRoutes";
+import systemlogRoutes from "./routes/SystemlogRoutes";
 
 // Config app
 const port = 3001;
@@ -37,6 +42,7 @@ app.use(
 );
 
 // Prevent CORS errors
+app.use(cors());
 // Handle header
 app.use((req: Request, res: Response, next: NextFunction) => {
   res.header(
@@ -69,6 +75,9 @@ app.use(`${API_URL}/schedules`, scheduleRoutes);
 app.use(`${API_URL}/semesters`, semesterRoutes);
 app.use(`${API_URL}/teachings`, teachingRoutes);
 app.use(`${API_URL}/users`, userRoutes);
+app.use(`${API_URL}/requests`, requestRoutes);
+app.use(`${API_URL}/comments`, commentRoutes);
+app.use(`${API_URL}/systemlogs`, systemlogRoutes);
 
 // Handle 404 error
 app.use((req: Request, res: Response, next: NextFunction) => {

@@ -14,7 +14,7 @@ router.use(requireAuth);
 // GET method: get a user
 router.get("/", async (req, res, next) => {
   try {
-    const user = await User.findOne({
+    let user = await User.findOne({
       email: req.body.user.email,
       isHidden: false,
     });
@@ -36,6 +36,11 @@ router.get("/", async (req, res, next) => {
     // If Found user
     if (user.roles.includes(Number(req.query.role))) {
       log(STATUSES.INFO, req.body.user);
+      if (!user.avatarUrl) {
+        user.avatarUrl = req.body.user.picture;
+        console.log(user.avatarUrl);
+      }
+      user = await user.save();
       res.status(200).json({
         verifiedUser: {
           fullName: user.fullName,

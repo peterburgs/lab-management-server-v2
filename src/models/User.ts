@@ -21,7 +21,10 @@ const userSchema: Schema = new Schema(
       type: [Number],
       required: true,
     },
-
+    avatarUrl: {
+      type: String,
+      required: false,
+    },
     isHidden: {
       type: Boolean,
       required: false,
