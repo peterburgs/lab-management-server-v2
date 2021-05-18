@@ -129,3 +129,9 @@ export interface ISystemlog extends Document {
   models: MODELS;
   modelId: string;
 }
+export interface IAcademicYear extends Document {
+  name: string;
+  startDate: Date;
+  isOpening: boolean;
+  numberOfWeek: number;
+}

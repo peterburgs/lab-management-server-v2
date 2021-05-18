@@ -25,6 +25,7 @@ import userRoutes from "./routes/UserRoutes";
 import requestRoutes from "./routes/RequestRoutes";
 import commentRoutes from "./routes/CommentRoutes";
 import systemlogRoutes from "./routes/SystemlogRoutes";
+import academicYearRoutes from "./routes/AcademicYearRoutes";
 
 // Config app
 const port = 3001;
@@ -78,6 +79,7 @@ app.use(`${API_URL}/users`, userRoutes);
 app.use(`${API_URL}/requests`, requestRoutes);
 app.use(`${API_URL}/comments`, commentRoutes);
 app.use(`${API_URL}/systemlogs`, systemlogRoutes);
+app.use(`${API_URL}/academic-years`, academicYearRoutes);
 
 // Handle 404 error
 app.use((req: Request, res: Response, next: NextFunction) => {
