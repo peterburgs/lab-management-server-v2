@@ -18,45 +18,28 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-const AcademicYear_1 = __importDefault(require("./AcademicYear"));
-const semesterSchema = new mongoose_1.Schema({
-    academicYear: {
-        type: String,
-        ref: AcademicYear_1.default,
-        required: true,
-    },
-    semesterName: {
+const academicYearSchema = new mongoose_1.Schema({
+    name: {
         type: String,
         required: true,
-        default: "New Semester",
     },
-    index: {
+    numberOfWeeks: {
         type: Number,
         required: true,
     },
     startDate: {
         type: Date,
         required: true,
-        default: Date.now(),
     },
-    numberOfWeeks: {
-        type: Number,
-        required: true,
-        min: 0,
+    endDate: {
+        type: Date,
+        required: false,
     },
     isOpening: {
         type: Boolean,
         required: true,
-        default: true,
-    },
-    labSchedule: {
-        type: Array,
-        required: false,
     },
     isHidden: {
         type: Boolean,
@@ -64,4 +47,4 @@ const semesterSchema = new mongoose_1.Schema({
         default: false,
     },
 }, { timestamps: true });
-exports.default = mongoose_1.default.model("Semester", semesterSchema);
+exports.default = mongoose_1.default.model("AcademicYear", academicYearSchema);

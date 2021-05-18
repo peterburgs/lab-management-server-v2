@@ -9,4 +9,5 @@ export enum MODELS {
   SEMESTER,
   TEACHING,
   USER,
+  ACADEMIC_YEAR,
 }

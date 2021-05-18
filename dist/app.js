@@ -43,6 +43,7 @@ const UserRoutes_1 = __importDefault(require("./routes/UserRoutes"));
 const RequestRoutes_1 = __importDefault(require("./routes/RequestRoutes"));
 const CommentRoutes_1 = __importDefault(require("./routes/CommentRoutes"));
 const SystemlogRoutes_1 = __importDefault(require("./routes/SystemlogRoutes"));
+const AcademicYearRoutes_1 = __importDefault(require("./routes/AcademicYearRoutes"));
 const port = 3001;
 const app = express_1.default();
 const API_URL = process.env.API_URL;
@@ -77,6 +78,7 @@ app.use(`${API_URL}/users`, UserRoutes_1.default);
 app.use(`${API_URL}/requests`, RequestRoutes_1.default);
 app.use(`${API_URL}/comments`, CommentRoutes_1.default);
 app.use(`${API_URL}/systemlogs`, SystemlogRoutes_1.default);
+app.use(`${API_URL}/academic-years`, AcademicYearRoutes_1.default);
 app.use((req, res, next) => {
     const error = new Error("Page Not Found!");
     error.code = "404";

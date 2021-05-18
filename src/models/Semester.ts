@@ -1,13 +1,23 @@
 import mongoose, { model, Model, Schema, Document, Mongoose } from "mongoose";
 import { ISemester } from "../types";
+import AcademicYear from "./AcademicYear";
 
 // Schema
 const semesterSchema: Schema = new Schema(
   {
+    academicYear: {
+      type: String,
+      ref: AcademicYear,
+      required: true,
+    },
     semesterName: {
       type: String,
       required: true,
       default: "New Semester",
+    },
+    index: {
+      type: Number,
+      required: true,
     },
     startDate: {
       type: Date,
