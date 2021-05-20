@@ -76,6 +76,7 @@ router.get("/", (req, res, next) => {
 router.post("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     requireRoles_1.default([types_1.ROLES.LECTURER], req, res, next, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         let teaching = new Teaching_1.default({
+            code: req.body.code,
             user: req.body.uId,
             course: req.body.course,
             group: req.body.group,
@@ -86,6 +87,7 @@ router.post("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function*
             dayOfWeek: req.body.dayOfWeek,
             startPeriod: req.body.startPeriod,
             endPeriod: req.body.endPeriod,
+            class: req.body.class,
             isHidden: req.body.isHidden,
         });
         try {
@@ -130,16 +132,18 @@ router.post("/bulk", (req, res, next) => __awaiter(void 0, void 0, void 0, funct
                         session.abortTransaction();
                     }
                     let teaching = new Teaching_1.default({
+                        code: teachings[index].code,
                         course: teachings[index].course,
                         group: teachings[index].group,
                         registration: teachings[index].registration,
-                        user: teachings[index].user,
+                        user: teachings[index].uId,
                         numberOfStudents: teachings[index].numberOfStudents,
                         theoryRoom: teachings[index].theoryRoom,
                         numberOfPracticalWeeks: teachings[index].numberOfPracticalWeeks,
                         dayOfWeek: teachings[index].dayOfWeek,
                         startPeriod: teachings[index].startPeriod,
                         endPeriod: teachings[index].endPeriod,
+                        class: teachings[index].class,
                         isHidden: teachings[index].isHidden,
                     });
                     teaching = yield teaching.save({ session });

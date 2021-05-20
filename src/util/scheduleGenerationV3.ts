@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import _ from "lodash";
 import log, { message } from "./log";
 import { STATUSES } from "../common/statuses";
-
+import moment from "moment";
 // Models
 import LabUsage from "../models/LabUsage";
 import Teaching from "../models/Teaching";
@@ -12,8 +12,9 @@ import Semester from "../models/Semester";
 import { ILabUsage, ILab, ITeaching, ISemester } from "../types";
 
 // Define
-const scheduleGenerationV2 = async (
-  labs: ILab[],
+const scheduleGenerationV3 = async (
+  oldLabs: ILab[],
+  newLabs: ILab[],
   teachings: ITeaching[],
   semesterId: string,
   numberOfWeeks: number,
@@ -30,17 +31,16 @@ const scheduleGenerationV2 = async (
       teachings.forEach((t) => teachingQueue.push(t));
       teachingQueue.sort((a, b) => b.numberOfStudents - a.numberOfStudents);
       let labQueue: ILab[] = [];
-      labs.forEach((l) => labQueue.push(l));
+      oldLabs.forEach((l) => labQueue.push(l));
       labQueue.sort((a, b) => b.capacity - a.capacity);
+      newLabs.sort((a, b) => moment(a.createdAt!).diff(moment(b.createdAt)));
+      newLabs.forEach((l) => labQueue.push(l));
       let { labSchedule } = semester!;
       if (!labSchedule || labSchedule.length <= 0) {
-        labSchedule = Array(labs.length * numberOfPeriods + 1)
+        labSchedule = Array(labQueue.length * numberOfPeriods + 1)
           .fill(0)
           .map(() => Array(numberOfWeeks * 7).fill(0));
       }
-
-      console.log(teachingQueue);
-      console.log("===");
 
       while (teachingQueue.length) {
         let currentTeaching = teachingQueue.shift()!;
@@ -131,4 +131,4 @@ const scheduleGenerationV2 = async (
 };
 
 // Export
-export default scheduleGenerationV2;
+export default scheduleGenerationV3;

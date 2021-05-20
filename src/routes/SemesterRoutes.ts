@@ -60,13 +60,15 @@ router.post("/", async (req, res, next) => {
   requireRole([ROLES.ADMIN], req, res, next, async (req, res, next) => {
     let semester: ISemester = new Semester({
       academicYear: req.body.academicYear,
-      startDate: new Date(req.body.startDate),
       index: req.body.index,
       semesterName: req.body.semesterName,
       numberOfWeeks: req.body.numberOfWeeks,
-      isOpening: req.body.isOpening,
+      status: req.body.status,
       isHidden: req.body.isHidden,
     });
+    if (req.body.startDate) {
+      semester.startDate = new Date(req.body.startDate);
+    }
     try {
       semester = await semester.save();
       if (semester) {

@@ -34,13 +34,13 @@ const labUsageSchema: Schema = new Schema(
       type: Number,
       required: true,
       min: PERIOD.ONE,
-      max: PERIOD.FIFTEEN,
+      max: PERIOD.SIXTEENTH,
     },
     endPeriod: {
       type: Number,
       required: true,
       min: PERIOD.ONE,
-      max: PERIOD.FIFTEEN,
+      max: PERIOD.SIXTEENTH,
     },
     isHidden: {
       type: Boolean,

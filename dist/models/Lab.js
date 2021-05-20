@@ -30,6 +30,10 @@ const labSchema = new mongoose_1.Schema({
         required: true,
         min: 0,
     },
+    isAvailableForCurrentUsing: {
+        type: Boolean,
+        required: true,
+    },
     isHidden: {
         type: Boolean,
         required: false,

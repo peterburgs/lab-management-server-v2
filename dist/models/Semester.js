@@ -24,6 +24,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const AcademicYear_1 = __importDefault(require("./AcademicYear"));
+const semesterStatuses_1 = require("../common/semesterStatuses");
 const semesterSchema = new mongoose_1.Schema({
     academicYear: {
         type: String,
@@ -41,16 +42,14 @@ const semesterSchema = new mongoose_1.Schema({
     },
     startDate: {
         type: Date,
-        required: true,
-        default: Date.now(),
     },
     numberOfWeeks: {
         type: Number,
         required: true,
         min: 0,
     },
-    isOpening: {
-        type: Boolean,
+    status: {
+        type: semesterStatuses_1.SEMESTER_STATUSES,
         required: true,
         default: true,
     },

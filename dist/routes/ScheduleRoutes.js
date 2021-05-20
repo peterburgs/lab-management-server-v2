@@ -35,7 +35,8 @@ const express_1 = require("express");
 const log_1 = __importStar(require("../util/log"));
 const statuses_1 = require("../common/statuses");
 const types_1 = require("../types");
-const scheduleGenerationV2_1 = __importDefault(require("../util/scheduleGenerationV2"));
+const scheduleGenerationV3_1 = __importDefault(require("../util/scheduleGenerationV3"));
+const moment_1 = __importDefault(require("moment"));
 const requireAuth_1 = __importDefault(require("../helpers/requireAuth"));
 const requireRoles_1 = __importDefault(require("../helpers/requireRoles"));
 const Semester_1 = __importDefault(require("../models/Semester"));
@@ -83,7 +84,14 @@ router.post("/generate", (req, res, next) => __awaiter(void 0, void 0, void 0, f
                 _id: req.body.registration,
             });
             yield LabUsage_1.default.deleteMany({});
-            let labs = yield Lab_1.default.find({ isHidden: false });
+            let oldLabs = yield Lab_1.default.find({
+                isHidden: false,
+                isAvailableForCurrentUsing: true,
+            });
+            let newLabs = yield Lab_1.default.find({
+                isHidden: false,
+                isAvailableForCurrentUsing: false,
+            });
             let teachings = yield Teaching_1.default.find({
                 registration: registration._id,
                 isHidden: false,
@@ -91,7 +99,7 @@ router.post("/generate", (req, res, next) => __awaiter(void 0, void 0, void 0, f
             let semester = yield Semester_1.default.findById({
                 _id: registration.semester,
             });
-            let _schedule = yield scheduleGenerationV2_1.default(labs, teachings, semester._id, semester.numberOfWeeks, types_1.PERIOD.FIFTEEN);
+            let _schedule = yield scheduleGenerationV3_1.default(oldLabs, newLabs, teachings, semester._id, semester.numberOfWeeks, types_1.PERIOD.SIXTEENTH);
             res.status(201).json({
                 message: log_1.message(statuses_1.STATUSES.SUCCESS, "Create schedule successfully"),
                 schedule: null,
@@ -124,8 +132,17 @@ router.post("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function*
                     _id: labUsage.semester,
                     isHidden: false,
                 });
-                let labs = yield Lab_1.default.find({ isHidden: false });
-                labs.sort((a, b) => b.capacity - a.capacity);
+                let oldLabs = yield Lab_1.default.find({
+                    isHidden: false,
+                    isAvailableForCurrentUsing: true,
+                });
+                oldLabs.sort((a, b) => b.capacity - a.capacity);
+                let newLabs = yield Lab_1.default.find({
+                    isHidden: false,
+                    isAvailableForCurrentUsing: false,
+                });
+                newLabs.sort((a, b) => moment_1.default(a.createdAt).diff(moment_1.default(b.createdAt)));
+                let labs = oldLabs.concat(newLabs);
                 let { labSchedule } = semester;
                 for (let i = labUsage.startPeriod; i <= labUsage.endPeriod; i++) {
                     labSchedule[i + 15 * labs.findIndex((lab) => lab._id == labUsage.lab)][labUsage.weekNo * 7 + labUsage.dayOfWeek] = 1;
@@ -178,8 +195,17 @@ router.put("/:id", (req, res, next) => __awaiter(void 0, void 0, void 0, functio
                 isHidden: false,
             });
             let { labSchedule } = semester;
-            let labs = yield Lab_1.default.find({ isHidden: false });
-            labs.sort((a, b) => b.capacity - a.capacity);
+            let oldLabs = yield Lab_1.default.find({
+                isHidden: false,
+                isAvailableForCurrentUsing: true,
+            });
+            oldLabs.sort((a, b) => b.capacity - a.capacity);
+            let newLabs = yield Lab_1.default.find({
+                isHidden: false,
+                isAvailableForCurrentUsing: false,
+            });
+            newLabs.sort((a, b) => moment_1.default(a.createdAt).diff(moment_1.default(b.createdAt)));
+            let labs = oldLabs.concat(newLabs);
             for (let i = oldLabUsage.startPeriod; i <= oldLabUsage.endPeriod; i++) {
                 labSchedule[i + 15 * labs.findIndex((lab) => lab._id == oldLabUsage.lab)][oldLabUsage.weekNo * 7 + oldLabUsage.dayOfWeek] = 0;
             }

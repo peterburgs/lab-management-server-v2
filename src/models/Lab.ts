@@ -13,6 +13,10 @@ const labSchema: Schema = new Schema(
       required: true,
       min: 0,
     },
+    isAvailableForCurrentUsing: {
+      type: Boolean,
+      required: true,
+    },
     isHidden: {
       type: Boolean,
       required: false,

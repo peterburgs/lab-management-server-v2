@@ -18,6 +18,12 @@ export enum DAY_OF_WEEKS {
   SATURDAY,
   SUNDAY,
 }
+
+export enum COURSE_TYPES {
+  PRACTICAL,
+  THEORY,
+}
+
 export enum PERIOD {
   ONE = 1,
   TWO = 2,
@@ -31,9 +37,10 @@ export enum PERIOD {
   TEN = 10,
   ELEVEN = 11,
   TWELVE = 12,
-  THIRTEEN = 13,
-  FOURTEEN = 14,
-  FIFTEEN = 15,
+  THIRTEENTH = 13,
+  FOURTEENTH = 14,
+  FIFTEENTH = 15,
+  SIXTEENTH = 16,
 }
 
 export interface IUser extends Document {
@@ -50,10 +57,13 @@ export interface ISemester extends Document {
   startDate: Date;
   numberOfWeeks: number;
   isOpening: boolean;
+  index: number;
+  academicYear: string;
   isHidden: boolean;
   labSchedule: number[][];
 }
 export interface ITeaching extends Document {
+  code: string;
   user: string;
   course: string;
   group: number;
@@ -62,6 +72,7 @@ export interface ITeaching extends Document {
   endPeriod: PERIOD;
   numberOfStudents: number;
   theoryRoom: string;
+  class: string;
   numberOfPracticalWeeks: number;
   registration: string;
   semester: string;
@@ -88,7 +99,9 @@ export interface IRegistrableCourse extends Document {
 export interface ILab extends Document {
   labName: string;
   capacity: number;
+  isAvailableForCurrentUsing: boolean;
   isHidden: boolean;
+  createdAt?: Date;
 }
 export interface ILabUsage extends Document {
   lab: string;

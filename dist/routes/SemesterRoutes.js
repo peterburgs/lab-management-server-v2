@@ -75,13 +75,15 @@ router.post("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function*
     requireRoles_1.default([types_1.ROLES.ADMIN], req, res, next, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         let semester = new Semester_1.default({
             academicYear: req.body.academicYear,
-            startDate: new Date(req.body.startDate),
             index: req.body.index,
             semesterName: req.body.semesterName,
             numberOfWeeks: req.body.numberOfWeeks,
-            isOpening: req.body.isOpening,
+            status: req.body.status,
             isHidden: req.body.isHidden,
         });
+        if (req.body.startDate) {
+            semester.startDate = new Date(req.body.startDate);
+        }
         try {
             semester = yield semester.save();
             if (semester) {

@@ -1,6 +1,7 @@
 import mongoose, { model, Model, Schema, Document, Mongoose } from "mongoose";
 import { ISemester } from "../types";
 import AcademicYear from "./AcademicYear";
+import { SEMESTER_STATUSES } from "../common/semesterStatuses";
 
 // Schema
 const semesterSchema: Schema = new Schema(
@@ -21,16 +22,14 @@ const semesterSchema: Schema = new Schema(
     },
     startDate: {
       type: Date,
-      required: true,
-      default: Date.now(),
     },
     numberOfWeeks: {
       type: Number,
       required: true,
       min: 0,
     },
-    isOpening: {
-      type: Boolean,
+    status: {
+      type: SEMESTER_STATUSES,
       required: true,
       default: true,
     },
