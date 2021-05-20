@@ -15,9 +15,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 const log_1 = __importDefault(require("./log"));
 const statuses_1 = require("../common/statuses");
+const moment_1 = __importDefault(require("moment"));
 const LabUsage_1 = __importDefault(require("../models/LabUsage"));
 const Semester_1 = __importDefault(require("../models/Semester"));
-const scheduleGenerationV2 = (labs, teachings, semesterId, numberOfWeeks, numberOfPeriods) => __awaiter(void 0, void 0, void 0, function* () {
+const scheduleGenerationV3 = (oldLabs, newLabs, teachings, semesterId, numberOfWeeks, numberOfPeriods) => __awaiter(void 0, void 0, void 0, function* () {
     const session = yield mongoose_1.default.startSession();
     try {
         yield session.withTransaction(() => __awaiter(void 0, void 0, void 0, function* () {
@@ -29,16 +30,16 @@ const scheduleGenerationV2 = (labs, teachings, semesterId, numberOfWeeks, number
             teachings.forEach((t) => teachingQueue.push(t));
             teachingQueue.sort((a, b) => b.numberOfStudents - a.numberOfStudents);
             let labQueue = [];
-            labs.forEach((l) => labQueue.push(l));
+            oldLabs.forEach((l) => labQueue.push(l));
             labQueue.sort((a, b) => b.capacity - a.capacity);
+            newLabs.sort((a, b) => moment_1.default(a.createdAt).diff(moment_1.default(b.createdAt)));
+            newLabs.forEach((l) => labQueue.push(l));
             let { labSchedule } = semester;
             if (!labSchedule || labSchedule.length <= 0) {
-                labSchedule = Array(labs.length * numberOfPeriods + 1)
+                labSchedule = Array(labQueue.length * numberOfPeriods + 1)
                     .fill(0)
                     .map(() => Array(numberOfWeeks * 7).fill(0));
             }
-            console.log(teachingQueue);
-            console.log("===");
             while (teachingQueue.length) {
                 let currentTeaching = teachingQueue.shift();
                 console.log(currentTeaching);
@@ -102,4 +103,4 @@ const scheduleGenerationV2 = (labs, teachings, semesterId, numberOfWeeks, number
         session.endSession();
     }
 });
-exports.default = scheduleGenerationV2;
+exports.default = scheduleGenerationV3;

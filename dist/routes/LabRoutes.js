@@ -35,13 +35,16 @@ const express_1 = require("express");
 const log_1 = __importStar(require("../util/log"));
 const statuses_1 = require("../common/statuses");
 const types_1 = require("../types");
+const types_2 = require("../types");
 const requireAuth_1 = __importDefault(require("../helpers/requireAuth"));
 const requireRoles_1 = __importDefault(require("../helpers/requireRoles"));
+const semesterStatuses_1 = require("../common/semesterStatuses");
 const Lab_1 = __importDefault(require("../models/Lab"));
+const Semester_1 = __importDefault(require("../models/Semester"));
 const router = express_1.Router();
 router.use(requireAuth_1.default);
 router.get("/", (req, res, next) => {
-    requireRoles_1.default([types_1.ROLES.ADMIN, types_1.ROLES.LECTURER], req, res, next, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    requireRoles_1.default([types_2.ROLES.ADMIN, types_2.ROLES.LECTURER], req, res, next, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const labs = yield Lab_1.default.find(Object.assign({ isHidden: false }, req.query)).exec();
             if (labs.length) {
@@ -73,10 +76,28 @@ router.get("/", (req, res, next) => {
     }));
 });
 router.post("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    requireRoles_1.default([types_1.ROLES.ADMIN], req, res, next, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    requireRoles_1.default([types_2.ROLES.ADMIN], req, res, next, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+        const isAvailableForCurrentUsing = req.body.isAvailableForCurrentUsing;
+        console.log(isAvailableForCurrentUsing);
+        if (!isAvailableForCurrentUsing) {
+            let semester = yield Semester_1.default.findOne({
+                status: semesterStatuses_1.SEMESTER_STATUSES.OPENING,
+            });
+            if (semester) {
+                let { labSchedule } = semester;
+                let extra = Array(types_1.PERIOD.SIXTEENTH)
+                    .fill(0)
+                    .map(() => Array(semester.numberOfWeeks * 7).fill(0));
+                labSchedule = labSchedule.concat(extra);
+                semester.labSchedule = labSchedule;
+                semester = yield semester.save();
+                console.log("*** Hello World");
+            }
+        }
         let lab = new Lab_1.default({
             labName: req.body.labName,
             capacity: req.body.capacity,
+            isAvailableForCurrentUsing: req.body.isAvailableForCurrentUsing,
             isHidden: req.body.isHidden,
         });
         try {
@@ -107,7 +128,7 @@ router.post("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function*
     }));
 }));
 router.put("/:id", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    requireRoles_1.default([types_1.ROLES.ADMIN], req, res, next, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    requireRoles_1.default([types_2.ROLES.ADMIN], req, res, next, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             let lab = yield Lab_1.default.findByIdAndUpdate({
                 _id: req.params.id,
@@ -141,7 +162,7 @@ router.put("/:id", (req, res, next) => __awaiter(void 0, void 0, void 0, functio
     }));
 }));
 router.delete("/:id", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    requireRoles_1.default([types_1.ROLES.ADMIN], req, res, next, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    requireRoles_1.default([types_2.ROLES.ADMIN], req, res, next, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const deletedLab = yield Lab_1.default.findByIdAndUpdate({
                 _id: req.params.id,

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PERIOD = exports.DAY_OF_WEEKS = exports.ROLES = void 0;
+exports.PERIOD = exports.COURSE_TYPES = exports.DAY_OF_WEEKS = exports.ROLES = void 0;
 var ROLES;
 (function (ROLES) {
     ROLES[ROLES["ADMIN"] = 0] = "ADMIN";
@@ -17,6 +17,11 @@ var DAY_OF_WEEKS;
     DAY_OF_WEEKS[DAY_OF_WEEKS["SATURDAY"] = 5] = "SATURDAY";
     DAY_OF_WEEKS[DAY_OF_WEEKS["SUNDAY"] = 6] = "SUNDAY";
 })(DAY_OF_WEEKS = exports.DAY_OF_WEEKS || (exports.DAY_OF_WEEKS = {}));
+var COURSE_TYPES;
+(function (COURSE_TYPES) {
+    COURSE_TYPES[COURSE_TYPES["PRACTICAL"] = 0] = "PRACTICAL";
+    COURSE_TYPES[COURSE_TYPES["THEORY"] = 1] = "THEORY";
+})(COURSE_TYPES = exports.COURSE_TYPES || (exports.COURSE_TYPES = {}));
 var PERIOD;
 (function (PERIOD) {
     PERIOD[PERIOD["ONE"] = 1] = "ONE";
@@ -31,7 +36,8 @@ var PERIOD;
     PERIOD[PERIOD["TEN"] = 10] = "TEN";
     PERIOD[PERIOD["ELEVEN"] = 11] = "ELEVEN";
     PERIOD[PERIOD["TWELVE"] = 12] = "TWELVE";
-    PERIOD[PERIOD["THIRTEEN"] = 13] = "THIRTEEN";
-    PERIOD[PERIOD["FOURTEEN"] = 14] = "FOURTEEN";
-    PERIOD[PERIOD["FIFTEEN"] = 15] = "FIFTEEN";
+    PERIOD[PERIOD["THIRTEENTH"] = 13] = "THIRTEENTH";
+    PERIOD[PERIOD["FOURTEENTH"] = 14] = "FOURTEENTH";
+    PERIOD[PERIOD["FIFTEENTH"] = 15] = "FIFTEENTH";
+    PERIOD[PERIOD["SIXTEENTH"] = 16] = "SIXTEENTH";
 })(PERIOD = exports.PERIOD || (exports.PERIOD = {}));

@@ -72,6 +72,7 @@ router.get("/", (req, res, next) => {
 router.post("/", async (req, res, next) => {
   requireRole([ROLES.LECTURER], req, res, next, async (req, res, next) => {
     let teaching: ITeaching = new Teaching({
+      code: req.body.code,
       user: req.body.uId,
       course: req.body.course,
       group: req.body.group,
@@ -82,6 +83,7 @@ router.post("/", async (req, res, next) => {
       dayOfWeek: req.body.dayOfWeek,
       startPeriod: req.body.startPeriod,
       endPeriod: req.body.endPeriod,
+      class: req.body.class,
       isHidden: req.body.isHidden,
     });
     try {
@@ -134,16 +136,18 @@ router.post("/bulk", async (req, res, next) => {
             session.abortTransaction();
           }
           let teaching: ITeaching = new Teaching({
+            code: teachings[index].code,
             course: teachings[index].course,
             group: teachings[index].group,
             registration: teachings[index].registration,
-            user: teachings[index].user,
+            user: teachings[index].uId,
             numberOfStudents: teachings[index].numberOfStudents,
             theoryRoom: teachings[index].theoryRoom,
             numberOfPracticalWeeks: teachings[index].numberOfPracticalWeeks,
             dayOfWeek: teachings[index].dayOfWeek,
             startPeriod: teachings[index].startPeriod,
             endPeriod: teachings[index].endPeriod,
+            class: teachings[index].class,
             isHidden: teachings[index].isHidden,
           });
           teaching = await teaching.save({ session });

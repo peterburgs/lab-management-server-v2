@@ -4,6 +4,10 @@ import { ITeaching, DAY_OF_WEEKS, PERIOD } from "../types";
 // Schema
 const teachingSchema: Schema = new Schema(
   {
+    code: {
+      type: String,
+      required: false,
+    },
     user: {
       type: String,
       ref: "User",
@@ -29,13 +33,13 @@ const teachingSchema: Schema = new Schema(
       type: Number,
       required: true,
       min: PERIOD.ONE,
-      max: PERIOD.FIFTEEN,
+      max: PERIOD.SIXTEENTH,
     },
     endPeriod: {
       type: Number,
       required: true,
       min: PERIOD.ONE,
-      max: PERIOD.FIFTEEN,
+      max: PERIOD.SIXTEENTH,
     },
     numberOfStudents: {
       type: Number,
@@ -54,6 +58,10 @@ const teachingSchema: Schema = new Schema(
       required: true,
     },
     theoryRoom: {
+      type: String,
+      required: true,
+    },
+    class: {
       type: String,
       required: true,
     },

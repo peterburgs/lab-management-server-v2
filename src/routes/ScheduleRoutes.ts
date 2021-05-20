@@ -4,6 +4,9 @@ import { STATUSES } from "../common/statuses";
 import { ROLES, ILabUsage, PERIOD, ISemester } from "../types";
 import ScheduleGeneration from "../util/scheduleGeneration";
 import scheduleGenerationV2 from "../util/scheduleGenerationV2";
+import scheduleGenerationV3 from "../util/scheduleGenerationV3";
+import moment from "moment";
+
 // Middleware
 import requireAuth from "../helpers/requireAuth";
 import requireRole from "../helpers/requireRoles";
@@ -71,7 +74,14 @@ router.post("/generate", async (req, res, next) => {
         _id: req.body.registration,
       });
       await LabUsage.deleteMany({});
-      let labs = await Lab.find({ isHidden: false });
+      let oldLabs = await Lab.find({
+        isHidden: false,
+        isAvailableForCurrentUsing: true,
+      });
+      let newLabs = await Lab.find({
+        isHidden: false,
+        isAvailableForCurrentUsing: false,
+      });
       let teachings = await Teaching.find({
         registration: registration!._id,
         isHidden: false,
@@ -79,12 +89,13 @@ router.post("/generate", async (req, res, next) => {
       let semester = await Semester.findById({
         _id: registration!.semester,
       });
-      let _schedule = await scheduleGenerationV2(
-        labs,
+      let _schedule = await scheduleGenerationV3(
+        oldLabs,
+        newLabs,
         teachings,
         semester!._id,
         semester!.numberOfWeeks,
-        PERIOD.FIFTEEN
+        PERIOD.SIXTEENTH
       );
       res.status(201).json({
         message: message(STATUSES.SUCCESS, "Create schedule successfully"),
@@ -119,10 +130,19 @@ router.post("/", async (req, res, next) => {
           _id: labUsage.semester,
           isHidden: false,
         });
-        let labs = await Lab.find({ isHidden: false });
-        labs.sort((a, b) => b.capacity - a.capacity);
+
+        let oldLabs = await Lab.find({
+          isHidden: false,
+          isAvailableForCurrentUsing: true,
+        });
+        oldLabs.sort((a, b) => b.capacity - a.capacity);
+        let newLabs = await Lab.find({
+          isHidden: false,
+          isAvailableForCurrentUsing: false,
+        });
+        newLabs.sort((a, b) => moment(a.createdAt).diff(moment(b.createdAt)));
+        let labs = oldLabs.concat(newLabs);
         let { labSchedule } = semester!;
-        // TODO: update lab usage
         for (let i = labUsage!.startPeriod; i <= labUsage!.endPeriod; i++) {
           labSchedule[
             i + 15 * labs.findIndex((lab) => lab._id == labUsage!.lab)
@@ -185,8 +205,17 @@ router.put("/:id", async (req, res, next) => {
         isHidden: false,
       });
       let { labSchedule } = semester!;
-      let labs = await Lab.find({ isHidden: false });
-      labs.sort((a, b) => b.capacity - a.capacity);
+      let oldLabs = await Lab.find({
+        isHidden: false,
+        isAvailableForCurrentUsing: true,
+      });
+      oldLabs.sort((a, b) => b.capacity - a.capacity);
+      let newLabs = await Lab.find({
+        isHidden: false,
+        isAvailableForCurrentUsing: false,
+      });
+      newLabs.sort((a, b) => moment(a.createdAt).diff(moment(b.createdAt)));
+      let labs = oldLabs.concat(newLabs);
       for (let i = oldLabUsage!.startPeriod; i <= oldLabUsage!.endPeriod; i++) {
         labSchedule[
           i + 15 * labs.findIndex((lab) => lab._id == oldLabUsage!.lab)

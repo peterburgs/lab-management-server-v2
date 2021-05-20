@@ -1,0 +1,9 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.SEMESTER_STATUSES = void 0;
+var SEMESTER_STATUSES;
+(function (SEMESTER_STATUSES) {
+    SEMESTER_STATUSES[SEMESTER_STATUSES["CLOSED"] = 0] = "CLOSED";
+    SEMESTER_STATUSES[SEMESTER_STATUSES["OPENING"] = 1] = "OPENING";
+    SEMESTER_STATUSES[SEMESTER_STATUSES["FUTURE"] = 2] = "FUTURE";
+})(SEMESTER_STATUSES = exports.SEMESTER_STATUSES || (exports.SEMESTER_STATUSES = {}));

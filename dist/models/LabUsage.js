@@ -52,13 +52,13 @@ const labUsageSchema = new mongoose_1.Schema({
         type: Number,
         required: true,
         min: types_1.PERIOD.ONE,
-        max: types_1.PERIOD.FIFTEEN,
+        max: types_1.PERIOD.SIXTEENTH,
     },
     endPeriod: {
         type: Number,
         required: true,
         min: types_1.PERIOD.ONE,
-        max: types_1.PERIOD.FIFTEEN,
+        max: types_1.PERIOD.SIXTEENTH,
     },
     isHidden: {
         type: Boolean,

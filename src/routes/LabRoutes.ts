@@ -1,12 +1,15 @@
 import { Router } from "express";
 import log, { message } from "../util/log";
 import { STATUSES } from "../common/statuses";
-import { ROLES, ILab } from "../types";
+import { PERIOD } from "../types";
+import { ROLES, ILab, ISemester } from "../types";
 import requireAuth from "../helpers/requireAuth";
 import requireRole from "../helpers/requireRoles";
+import { SEMESTER_STATUSES } from "../common/semesterStatuses";
 
 // Import models
 import Lab from "../models/Lab";
+import Semester from "../models/Semester";
 
 // Config router
 const router = Router();
@@ -56,9 +59,28 @@ router.get("/", (req, res, next) => {
 // POST method: create new lab
 router.post("/", async (req, res, next) => {
   requireRole([ROLES.ADMIN], req, res, next, async (req, res, next) => {
+    const isAvailableForCurrentUsing = req.body.isAvailableForCurrentUsing;
+    console.log(isAvailableForCurrentUsing);
+    if (!isAvailableForCurrentUsing) {
+      let semester: ISemester | null = await Semester.findOne({
+        status: SEMESTER_STATUSES.OPENING,
+      });
+      if (semester) {
+        let { labSchedule } = semester;
+
+        let extra = Array(PERIOD.SIXTEENTH)
+          .fill(0)
+          .map(() => Array(semester!.numberOfWeeks * 7).fill(0));
+        labSchedule = labSchedule.concat(extra);
+        semester.labSchedule = labSchedule;
+        semester = await semester.save();
+        console.log("*** Hello World");
+      }
+    }
     let lab: ILab = new Lab({
       labName: req.body.labName,
       capacity: req.body.capacity,
+      isAvailableForCurrentUsing: req.body.isAvailableForCurrentUsing,
       isHidden: req.body.isHidden,
     });
     try {

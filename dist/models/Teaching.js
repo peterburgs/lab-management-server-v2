@@ -22,6 +22,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const types_1 = require("../types");
 const teachingSchema = new mongoose_1.Schema({
+    code: {
+        type: String,
+        required: false,
+    },
     user: {
         type: String,
         ref: "User",
@@ -47,13 +51,13 @@ const teachingSchema = new mongoose_1.Schema({
         type: Number,
         required: true,
         min: types_1.PERIOD.ONE,
-        max: types_1.PERIOD.FIFTEEN,
+        max: types_1.PERIOD.SIXTEENTH,
     },
     endPeriod: {
         type: Number,
         required: true,
         min: types_1.PERIOD.ONE,
-        max: types_1.PERIOD.FIFTEEN,
+        max: types_1.PERIOD.SIXTEENTH,
     },
     numberOfStudents: {
         type: Number,
@@ -72,6 +76,10 @@ const teachingSchema = new mongoose_1.Schema({
         required: true,
     },
     theoryRoom: {
+        type: String,
+        required: true,
+    },
+    class: {
         type: String,
         required: true,
     },

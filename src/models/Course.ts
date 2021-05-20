@@ -1,5 +1,5 @@
 import mongoose, { model, Model, Schema, Document, Mongoose } from "mongoose";
-import { ICourse } from "../types";
+import { ICourse, COURSE_TYPES } from "../types";
 
 // Schema
 const courseSchema: Schema = new Schema(
@@ -16,6 +16,10 @@ const courseSchema: Schema = new Schema(
       type: Number,
       required: true,
       min: 0,
+    },
+    type: {
+      type: COURSE_TYPES,
+      required: true,
     },
     isHidden: {
       type: Boolean,

@@ -20,6 +20,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
+const types_1 = require("../types");
 const courseSchema = new mongoose_1.Schema({
     _id: {
         type: String,
@@ -33,6 +34,10 @@ const courseSchema = new mongoose_1.Schema({
         type: Number,
         required: true,
         min: 0,
+    },
+    type: {
+        type: types_1.COURSE_TYPES,
+        required: true,
     },
     isHidden: {
         type: Boolean,

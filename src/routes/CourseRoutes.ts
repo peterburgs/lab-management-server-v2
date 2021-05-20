@@ -60,6 +60,7 @@ router.post("/", async (req, res, next) => {
       _id: req.body._id,
       courseName: req.body.courseName,
       numberOfCredits: req.body.numberOfCredits,
+      type: req.body.type,
       isHidden: req.body.isHidden,
     });
     try {
