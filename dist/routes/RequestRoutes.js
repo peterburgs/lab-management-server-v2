@@ -122,6 +122,11 @@ router.post("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function*
             title: req.body.title,
             description: req.body.description,
             type: req.body.type,
+            oldLab: req.body.oldLab,
+            oldWeekNo: req.body.oldWeekNo,
+            oldDayOfWeek: req.body.oldDayOfWeek,
+            oldStartPeriod: req.body.oldStartPeriod,
+            oldEndPeriod: req.body.oldEndPeriod,
         });
         try {
             request = yield request.save();

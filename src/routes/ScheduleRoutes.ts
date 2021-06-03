@@ -89,6 +89,7 @@ router.post("/generate", async (req, res, next) => {
       let semester = await Semester.findById({
         _id: registration!.semester,
       });
+      // Apply algorithm
       let _schedule = await scheduleGenerationV3(
         oldLabs,
         newLabs,

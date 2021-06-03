@@ -64,6 +64,7 @@ router.post("/", async (req, res, next) => {
       semesterName: req.body.semesterName,
       numberOfWeeks: req.body.numberOfWeeks,
       status: req.body.status,
+      startPracticalWeek: req.body.startPracticalWeek,
       isHidden: req.body.isHidden,
     });
     if (req.body.startDate) {

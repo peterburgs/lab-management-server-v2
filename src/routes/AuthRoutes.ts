@@ -1,5 +1,4 @@
 import express, { Router, Request, Response, NextFunction } from "express";
-import mongoose, { Model, Document } from "mongoose";
 import requireAuth from "../helpers/requireAuth";
 import requireRole from "../helpers/requireRoles";
 import User from "../models/User";

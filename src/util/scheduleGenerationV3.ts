@@ -44,7 +44,6 @@ const scheduleGenerationV3 = async (
 
       while (teachingQueue.length) {
         let currentTeaching = teachingQueue.shift()!;
-        console.log(currentTeaching);
         let availableDaysForCurrentTeaching: {
           weekNo: number;
           dayOfWeek: number;
@@ -52,8 +51,13 @@ const scheduleGenerationV3 = async (
           currentDay: number;
         }[] = [];
         for (let i = 0; i < labQueue.length; i++) {
-          for (let j = 14; j < numberOfWeeks * 7; j++) {
+          for (
+            let j = semester!.startPracticalWeek * 7;
+            j < numberOfWeeks * 7;
+            j++
+          ) {
             let currentWeek = Math.floor(j / 7);
+            if (currentWeek < currentTeaching.startPracticalWeek) break;
             let currentDayOfWeek = j % 7;
 
             if (currentDayOfWeek == currentTeaching?.dayOfWeek) {

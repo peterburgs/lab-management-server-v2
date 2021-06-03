@@ -61,6 +61,7 @@ export interface ISemester extends Document {
   academicYear: string;
   isHidden: boolean;
   labSchedule: number[][];
+  startPracticalWeek: number;
 }
 export interface ITeaching extends Document {
   code: string;
@@ -76,6 +77,7 @@ export interface ITeaching extends Document {
   numberOfPracticalWeeks: number;
   registration: string;
   semester: string;
+  startPracticalWeek: number;
   isHidden: boolean;
 }
 export interface IRegistration extends Document {
@@ -126,6 +128,11 @@ export interface IRequest extends Document {
   title: string;
   description: string;
   type: REQUEST_TYPES;
+  oldLab: string;
+  oldWeekNo: number;
+  oldDayOfWeek: number;
+  oldStartPeriod: number;
+  oldEndPeriod: number;
   isHidden: boolean;
 }
 

@@ -117,6 +117,11 @@ router.post("/", async (req, res, next) => {
       title: req.body.title,
       description: req.body.description,
       type: req.body.type,
+      oldLab: req.body.oldLab,
+      oldWeekNo: req.body.oldWeekNo,
+      oldDayOfWeek: req.body.oldDayOfWeek,
+      oldStartPeriod: req.body.oldStartPeriod,
+      oldEndPeriod: req.body.oldEndPeriod,
     });
     try {
       request = await request.save();

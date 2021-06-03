@@ -84,6 +84,7 @@ router.post("/", async (req, res, next) => {
       startPeriod: req.body.startPeriod,
       endPeriod: req.body.endPeriod,
       class: req.body.class,
+      startPracticalWeek: req.body.startPracticalWeek,
       isHidden: req.body.isHidden,
     });
     try {
@@ -148,9 +149,11 @@ router.post("/bulk", async (req, res, next) => {
             startPeriod: teachings[index].startPeriod,
             endPeriod: teachings[index].endPeriod,
             class: teachings[index].class,
+            startPracticalWeek: teachings[index].startPracticalWeek,
             isHidden: teachings[index].isHidden,
           });
           teaching = await teaching.save({ session });
+          teachings[index]._id = teaching._id;
           if (!teaching) {
             log(STATUSES.ERROR, "Cannot create teaching");
             res.status(500).json({

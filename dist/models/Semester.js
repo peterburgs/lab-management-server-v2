@@ -57,6 +57,10 @@ const semesterSchema = new mongoose_1.Schema({
         type: Array,
         required: false,
     },
+    startPracticalWeek: {
+        type: Number,
+        required: true,
+    },
     isHidden: {
         type: Boolean,
         required: false,

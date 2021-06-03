@@ -42,11 +42,12 @@ const scheduleGenerationV3 = (oldLabs, newLabs, teachings, semesterId, numberOfW
             }
             while (teachingQueue.length) {
                 let currentTeaching = teachingQueue.shift();
-                console.log(currentTeaching);
                 let availableDaysForCurrentTeaching = [];
                 for (let i = 0; i < labQueue.length; i++) {
-                    for (let j = 14; j < numberOfWeeks * 7; j++) {
+                    for (let j = semester.startPracticalWeek * 7; j < numberOfWeeks * 7; j++) {
                         let currentWeek = Math.floor(j / 7);
+                        if (currentWeek < currentTeaching.startPracticalWeek)
+                            break;
                         let currentDayOfWeek = j % 7;
                         if (currentDayOfWeek == (currentTeaching === null || currentTeaching === void 0 ? void 0 : currentTeaching.dayOfWeek)) {
                             if (availableDaysForCurrentTeaching.filter((w) => w.weekNo == currentWeek).length == 0) {

@@ -79,6 +79,7 @@ router.post("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function*
             semesterName: req.body.semesterName,
             numberOfWeeks: req.body.numberOfWeeks,
             status: req.body.status,
+            startPracticalWeek: req.body.startPracticalWeek,
             isHidden: req.body.isHidden,
         });
         if (req.body.startDate) {

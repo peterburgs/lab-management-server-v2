@@ -88,6 +88,7 @@ router.post("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function*
             startPeriod: req.body.startPeriod,
             endPeriod: req.body.endPeriod,
             class: req.body.class,
+            startPracticalWeek: req.body.startPracticalWeek,
             isHidden: req.body.isHidden,
         });
         try {
@@ -144,9 +145,11 @@ router.post("/bulk", (req, res, next) => __awaiter(void 0, void 0, void 0, funct
                         startPeriod: teachings[index].startPeriod,
                         endPeriod: teachings[index].endPeriod,
                         class: teachings[index].class,
+                        startPracticalWeek: teachings[index].startPracticalWeek,
                         isHidden: teachings[index].isHidden,
                     });
                     teaching = yield teaching.save({ session });
+                    teachings[index]._id = teaching._id;
                     if (!teaching) {
                         log_1.default(statuses_1.STATUSES.ERROR, "Cannot create teaching");
                         res.status(500).json({

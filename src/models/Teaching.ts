@@ -65,6 +65,10 @@ const teachingSchema: Schema = new Schema(
       type: String,
       required: true,
     },
+    startPracticalWeek: {
+      type: Number,
+      required: true,
+    },
     isHidden: {
       type: Boolean,
       required: false,

@@ -37,10 +37,7 @@ const requestSchema: Schema = new Schema(
       type: Number,
       min: 0,
     },
-    labUsage: {
-      type: String,
-      ref: "LabUsage",
-    },
+
     teaching: {
       type: String,
       ref: "Teaching",
@@ -56,6 +53,30 @@ const requestSchema: Schema = new Schema(
     type: {
       type: REQUEST_TYPES,
       required: true,
+    },
+    labUsage: {
+      type: String,
+      ref: "LabUsage",
+    },
+    oldLab: {
+      type: String,
+      required: false,
+    },
+    oldWeekNo: {
+      type: Number,
+      required: false,
+    },
+    oldStartPeriod: {
+      type: Number,
+      required: false,
+    },
+    oldEndPeriod: {
+      type: Number,
+      required: false,
+    },
+    oldDayOfWeek: {
+      type: Number,
+      required: false,
     },
     isHidden: {
       type: Boolean,

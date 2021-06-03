@@ -83,6 +83,10 @@ const teachingSchema = new mongoose_1.Schema({
         type: String,
         required: true,
     },
+    startPracticalWeek: {
+        type: Number,
+        required: true,
+    },
     isHidden: {
         type: Boolean,
         required: false,

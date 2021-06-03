@@ -37,6 +37,10 @@ const semesterSchema: Schema = new Schema(
       type: Array,
       required: false,
     },
+    startPracticalWeek: {
+      type: Number,
+      required: true,
+    },
     isHidden: {
       type: Boolean,
       required: false,
