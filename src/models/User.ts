@@ -25,6 +25,11 @@ const userSchema: Schema = new Schema(
       type: String,
       required: false,
     },
+    isFaceIdVerified: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
     isHidden: {
       type: Boolean,
       required: false,
