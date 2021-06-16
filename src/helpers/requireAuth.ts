@@ -11,12 +11,7 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const googleAuth = async (token: string) => {
   const ticket = await client.verifyIdToken({
     idToken: token,
-    audience: [
-      process.env.GOOGLE_CLIENT_ID!,
-      process.env.EXPO_CLIENT_ID!,
-      process.env.ANDROID_CLIENT_ID!,
-      process.env.IOS_CLIENT_ID!,
-    ],
+    audience: [process.env.GOOGLE_CLIENT_ID!, process.env.ANDROID_CLIENT_ID!],
   });
   return ticket.getPayload();
 };
@@ -40,6 +35,10 @@ const requireAuth = async (req: Request, res: Response, next: NextFunction) => {
   } catch (error) {
     const errorMessage: string = error.message.split(",")[0];
     log(STATUSES.ERROR, errorMessage);
+    return res.status(401).json({
+      message: message(STATUSES.ERROR, "Authentication failed"),
+      authorization,
+    });
   }
 };
 

@@ -63,6 +63,7 @@ router.post("/", async (req, res, next) => {
       isFaceIdVerified: req.body.isFaceIdVerified,
       isHidden: req.body.isHidden,
     });
+    console.log(user);
     try {
       user = await user.save();
       if (user) {
@@ -73,6 +74,7 @@ router.post("/", async (req, res, next) => {
           user,
         });
       }
+      console.log(user);
     } catch (error) {
       log(STATUSES.ERROR, error.message);
       res.status(500).json({
@@ -85,39 +87,45 @@ router.post("/", async (req, res, next) => {
 
 // PUT method: update a user
 router.put("/:id", async (req, res, next) => {
-  requireRole([ROLES.ADMIN], req, res, next, async (req, res, next) => {
-    try {
-      const user = await User.findByIdAndUpdate(
-        {
-          _id: req.params.id,
-          isHidden: false,
-        },
-        {
-          $set: req.body,
-        },
-        { new: true }
-      ).exec();
-      if (user) {
-        log(STATUSES.SUCCESS, "Update user successfully");
-        res.status(200).json({
-          message: message(STATUSES.SUCCESS, "Update user successfully"),
-          user,
-        });
-      } else {
-        log(STATUSES.ERROR, "Cannot update user");
-        res.status(422).json({
-          message: message(STATUSES.ERROR, "Cannot update user"),
+  requireRole(
+    [ROLES.ADMIN, ROLES.LECTURER],
+    req,
+    res,
+    next,
+    async (req, res, next) => {
+      try {
+        const user = await User.findByIdAndUpdate(
+          {
+            _id: req.params.id,
+            isHidden: false,
+          },
+          {
+            $set: req.body,
+          },
+          { new: true, upsert: true }
+        ).exec();
+        if (user) {
+          log(STATUSES.SUCCESS, "Update user successfully");
+          res.status(200).json({
+            message: message(STATUSES.SUCCESS, "Update user successfully"),
+            user,
+          });
+        } else {
+          log(STATUSES.ERROR, "Cannot update user");
+          res.status(422).json({
+            message: message(STATUSES.ERROR, "Cannot update user"),
+            user: null,
+          });
+        }
+      } catch (error) {
+        log(STATUSES.ERROR, error.message);
+        res.status(500).json({
+          message: message(STATUSES.ERROR, error.message),
           user: null,
         });
       }
-    } catch (error) {
-      log(STATUSES.ERROR, error.message);
-      res.status(500).json({
-        message: message(STATUSES.ERROR, error.message),
-        user: null,
-      });
     }
-  });
+  );
 });
 
 // DELETE method: delete a user

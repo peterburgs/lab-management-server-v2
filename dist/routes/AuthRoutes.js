@@ -47,7 +47,7 @@ router.get("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function* 
         if (!user) {
             log_1.default(statuses_1.STATUSES.ERROR, "Cannot find user with email " + req.body.user.email);
             return res.status(404).json({
-                message: log_1.message(statuses_1.STATUSES.ERROR, "Cannot find user with email " + req.body.user.email),
+                message: "Email " + req.body.user.email + " not found",
                 verifiedUser: null,
                 avatarUrl: null,
                 verifiedRole: null,

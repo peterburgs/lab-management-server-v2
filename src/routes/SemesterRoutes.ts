@@ -21,10 +21,23 @@ router.get("/", (req, res, next) => {
     next,
     async (req, res, next) => {
       try {
-        const semesters = await Semester.find({
-          isHidden: false,
-          ...req.query,
-        }).exec();
+        const { status } = req.query;
+        console.log(status);
+
+        const _status = Number(status);
+        let semesters = [];
+        console.log(req.query);
+        if (Object.entries(req.query).length) {
+          semesters = await Semester.find({
+            isHidden: false,
+            status: _status,
+          }).exec();
+        } else {
+          semesters = await Semester.find({
+            isHidden: false,
+          }).exec();
+        }
+
         if (semesters.length) {
           log(STATUSES.SUCCESS, "Get all semesters successfully");
           res.status(200).json({

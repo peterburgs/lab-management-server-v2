@@ -42,6 +42,14 @@ const labUsageSchema: Schema = new Schema(
       min: PERIOD.ONE,
       max: PERIOD.SIXTEENTH,
     },
+    checkInAt: {
+      type: Date,
+      required: false,
+    },
+    checkOutAt: {
+      type: Date,
+      required: false,
+    },
     isHidden: {
       type: Boolean,
       required: false,

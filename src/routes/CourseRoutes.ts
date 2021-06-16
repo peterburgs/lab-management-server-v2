@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { Router } from "express";
 import log, { message } from "../util/log";
 import { STATUSES } from "../common/statuses";
@@ -85,6 +86,50 @@ router.post("/", async (req, res, next) => {
         message: message(STATUSES.ERROR, error.message),
         course: null,
       });
+    }
+  });
+});
+// POST method: create many courses
+router.post("/bulk", async (req, res, next) => {
+  requireRole([ROLES.ADMIN], req, res, next, async (req, res, next) => {
+    let courses = req.body.courses;
+    const session = await mongoose.startSession();
+    try {
+      await session.withTransaction(async () => {
+        for (let index = 0; index < courses.length; index++) {
+          // Validate course
+          let course: ICourse = new Course({
+            _id: courses[index]._id,
+            courseName: courses[index].courseName,
+            numberOfCredits: courses[index].numberOfCredits,
+            type: courses[index].type,
+            isHidden: courses[index].isHidden,
+          });
+          course = await course.save({ session });
+          courses[index]._id = course._id;
+          if (!course) {
+            log(STATUSES.ERROR, "Cannot create course");
+            res.status(500).json({
+              message: message(STATUSES.ERROR, "Cannot create course"),
+              courses: [],
+            });
+            session.abortTransaction();
+          }
+        }
+        await session.commitTransaction();
+        log(STATUSES.SUCCESS, "Create new course successfully");
+        log(STATUSES.INFO, courses);
+        res.status(201).json({
+          message: message(STATUSES.SUCCESS, "Create new course successfully"),
+        });
+      });
+    } catch (error) {
+      log(STATUSES.ERROR, error.message);
+      res.status(500).json({
+        message: message(STATUSES.ERROR, error.message),
+      });
+    } finally {
+      session.endSession();
     }
   });
 });

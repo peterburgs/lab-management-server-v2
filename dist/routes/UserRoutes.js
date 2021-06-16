@@ -41,7 +41,7 @@ const User_1 = __importDefault(require("../models/User"));
 const router = express_1.Router();
 router.use(requireAuth_1.default);
 router.get("/", (req, res, next) => {
-    requireRoles_1.default([types_1.ROLES.ADMIN], req, res, next, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    requireRoles_1.default([types_1.ROLES.ADMIN, types_1.ROLES.LECTURER], req, res, next, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const users = yield User_1.default.find(Object.assign({ isHidden: false }, req.query)).exec();
             if (users.length) {
@@ -79,8 +79,11 @@ router.post("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function*
             email: req.body.email,
             fullName: req.body.fullName,
             roles: req.body.roles,
+            avatarUrl: req.body.avatarUrl,
+            isFaceIdVerified: req.body.isFaceIdVerified,
             isHidden: req.body.isHidden,
         });
+        console.log(user);
         try {
             user = yield user.save();
             if (user) {
@@ -91,6 +94,7 @@ router.post("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function*
                     user,
                 });
             }
+            console.log(user);
         }
         catch (error) {
             log_1.default(statuses_1.STATUSES.ERROR, error.message);
@@ -102,14 +106,14 @@ router.post("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function*
     }));
 }));
 router.put("/:id", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    requireRoles_1.default([types_1.ROLES.ADMIN], req, res, next, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    requireRoles_1.default([types_1.ROLES.ADMIN, types_1.ROLES.LECTURER], req, res, next, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const user = yield User_1.default.findByIdAndUpdate({
                 _id: req.params.id,
                 isHidden: false,
             }, {
                 $set: req.body,
-            }, { new: true }).exec();
+            }, { new: true, upsert: true }).exec();
             if (user) {
                 log_1.default(statuses_1.STATUSES.SUCCESS, "Update user successfully");
                 res.status(200).json({

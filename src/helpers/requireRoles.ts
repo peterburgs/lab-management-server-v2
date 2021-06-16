@@ -17,12 +17,11 @@ const requireRole = async (
       email: req.body.user.email,
     }).exec();
     if (user) {
-      for (let i = 0; i < routeRoles.length; i++) {
-        if (!user.roles.includes(routeRoles[i])) {
-          return res.status(401).json({
-            message: message(STATUSES.ERROR, "Permission denied"),
-          });
-        }
+      if (!user.roles.some((r) => routeRoles.includes(r))) {
+        console.log("Permission denied");
+        return res.status(401).json({
+          message: message(STATUSES.ERROR, "Permission denied"),
+        });
       }
       cb(req, res, next);
     } else {

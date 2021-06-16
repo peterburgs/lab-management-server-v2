@@ -51,7 +51,7 @@ const semesterSchema = new mongoose_1.Schema({
     status: {
         type: semesterStatuses_1.SEMESTER_STATUSES,
         required: true,
-        default: true,
+        default: 1,
     },
     labSchedule: {
         type: Array,

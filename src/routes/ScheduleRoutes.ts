@@ -35,7 +35,7 @@ router.get("/", (req, res, next) => {
           isHidden: false,
           ...req.query,
         }).exec();
-        if (labUsages) {
+        if (labUsages.length) {
           log(STATUSES.SUCCESS, "Get all lab usages successfully");
           res.status(200).json({
             message: message(
@@ -73,7 +73,8 @@ router.post("/generate", async (req, res, next) => {
       let registration = await Registration.findById({
         _id: req.body.registration,
       });
-      await LabUsage.deleteMany({});
+      // Uncomment this line to self destroy like Dr. Doofenshmirtz
+      // await LabUsage.deleteMany({});
       let oldLabs = await Lab.find({
         isHidden: false,
         isAvailableForCurrentUsing: true,
@@ -195,76 +196,90 @@ router.post("/", async (req, res, next) => {
 
 // PUT method: update a labUsage
 router.put("/:id", async (req, res, next) => {
-  requireRole([ROLES.ADMIN], req, res, next, async (req, res, next) => {
-    try {
-      let oldLabUsage = await LabUsage.findById({
-        _id: req.params.id,
-        isHidden: false,
-      });
-      let semester = await Semester.findById({
-        _id: oldLabUsage!.semester,
-        isHidden: false,
-      });
-      let { labSchedule } = semester!;
-      let oldLabs = await Lab.find({
-        isHidden: false,
-        isAvailableForCurrentUsing: true,
-      });
-      oldLabs.sort((a, b) => b.capacity - a.capacity);
-      let newLabs = await Lab.find({
-        isHidden: false,
-        isAvailableForCurrentUsing: false,
-      });
-      newLabs.sort((a, b) => moment(a.createdAt).diff(moment(b.createdAt)));
-      let labs = oldLabs.concat(newLabs);
-      for (let i = oldLabUsage!.startPeriod; i <= oldLabUsage!.endPeriod; i++) {
-        labSchedule[
-          i + 15 * labs.findIndex((lab) => lab._id == oldLabUsage!.lab)
-        ][oldLabUsage!.weekNo * 7 + oldLabUsage!.dayOfWeek] = 0;
-      }
-      let newLabUsage = await LabUsage.findByIdAndUpdate(
-        {
+  requireRole(
+    [ROLES.ADMIN, ROLES.LECTURER],
+    req,
+    res,
+    next,
+    async (req, res, next) => {
+      try {
+        let oldLabUsage = await LabUsage.findById({
           _id: req.params.id,
           isHidden: false,
-        },
-        { $set: req.body },
-        { new: true }
-      );
+        });
+        let semester = await Semester.findById({
+          _id: oldLabUsage!.semester,
+          isHidden: false,
+        });
+        let { labSchedule } = semester!;
+        let oldLabs = await Lab.find({
+          isHidden: false,
+          isAvailableForCurrentUsing: true,
+        });
+        oldLabs.sort((a, b) => b.capacity - a.capacity);
+        let newLabs = await Lab.find({
+          isHidden: false,
+          isAvailableForCurrentUsing: false,
+        });
+        newLabs.sort((a, b) => moment(a.createdAt).diff(moment(b.createdAt)));
+        let labs = oldLabs.concat(newLabs);
+        for (
+          let i = oldLabUsage!.startPeriod;
+          i <= oldLabUsage!.endPeriod;
+          i++
+        ) {
+          labSchedule[
+            i + 15 * labs.findIndex((lab) => lab._id == oldLabUsage!.lab)
+          ][oldLabUsage!.weekNo * 7 + oldLabUsage!.dayOfWeek] = 0;
+        }
+        let newLabUsage = await LabUsage.findByIdAndUpdate(
+          {
+            _id: req.params.id,
+            isHidden: false,
+          },
+          { $set: req.body },
+          { new: true, upsert: true }
+        );
 
-      for (let i = newLabUsage!.startPeriod; i <= newLabUsage!.endPeriod; i++) {
-        labSchedule[
-          i + 15 * labs.findIndex((lab) => lab._id == newLabUsage!.lab)
-        ][newLabUsage!.weekNo * 7 + newLabUsage!.dayOfWeek] = 1;
-      }
-      semester!.labSchedule = labSchedule;
-      semester = await semester!.save();
-      if (semester) {
-        log(STATUSES.SUCCESS, "Update semester, lab schedule successfully");
-        res.status(200).json({
-          message: message(
-            STATUSES.SUCCESS,
-            "Update semester, lab schedule successfully"
-          ),
-          labUsage: newLabUsage,
+        for (
+          let i = newLabUsage!.startPeriod;
+          i <= newLabUsage!.endPeriod;
+          i++
+        ) {
+          labSchedule[
+            i + 15 * labs.findIndex((lab) => lab._id == newLabUsage!.lab)
+          ][newLabUsage!.weekNo * 7 + newLabUsage!.dayOfWeek] = 1;
+        }
+        semester!.labSchedule = labSchedule;
+        semester = await semester!.save();
+        if (semester) {
+          log(STATUSES.SUCCESS, "Update semester, lab schedule successfully");
+          res.status(200).json({
+            message: message(
+              STATUSES.SUCCESS,
+              "Update semester, lab schedule successfully"
+            ),
+            labUsage: newLabUsage,
+          });
+        } else {
+          log(STATUSES.ERROR, "Cannot update semester, lab schedule");
+          res.status(200).json({
+            message: message(
+              STATUSES.ERROR,
+              "Cannot update semester, lab schedule successfully"
+            ),
+            labUsage: null,
+          });
+        }
+      } catch (error) {
+        log(STATUSES.ERROR, error.message);
+        res.status(500).json({
+          message: message(STATUSES.ERROR, error.message),
+          LabUsage: null,
         });
-      } else {
-        log(STATUSES.ERROR, "Cannot update semester, lab schedule");
-        res.status(200).json({
-          message: message(
-            STATUSES.ERROR,
-            "Cannot update semester, lab schedule successfully"
-          ),
-          labUsage: null,
-        });
       }
-    } catch (error) {
-      log(STATUSES.ERROR, error.message);
-      res.status(500).json({
-        message: message(STATUSES.ERROR, error.message),
-        LabUsage: null,
-      });
     }
-  });
+  );
 });
 
 // DELETE method: delete a labUsage

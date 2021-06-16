@@ -35,12 +35,7 @@ const client = new google_auth_library_1.OAuth2Client(process.env.GOOGLE_CLIENT_
 const googleAuth = (token) => __awaiter(void 0, void 0, void 0, function* () {
     const ticket = yield client.verifyIdToken({
         idToken: token,
-        audience: [
-            process.env.GOOGLE_CLIENT_ID,
-            process.env.EXPO_CLIENT_ID,
-            process.env.ANDROID_CLIENT_ID,
-            process.env.IOS_CLIENT_ID,
-        ],
+        audience: [process.env.GOOGLE_CLIENT_ID, process.env.ANDROID_CLIENT_ID],
     });
     return ticket.getPayload();
 });
@@ -65,6 +60,10 @@ const requireAuth = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
     catch (error) {
         const errorMessage = error.message.split(",")[0];
         log_1.default(statuses_1.STATUSES.ERROR, errorMessage);
+        return res.status(401).json({
+            message: log_1.message(statuses_1.STATUSES.ERROR, "Authentication failed"),
+            authorization,
+        });
     }
 });
 exports.default = requireAuth;

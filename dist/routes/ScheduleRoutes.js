@@ -50,7 +50,7 @@ router.get("/", (req, res, next) => {
     requireRoles_1.default([types_1.ROLES.ADMIN, types_1.ROLES.LECTURER], req, res, next, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const labUsages = yield LabUsage_1.default.find(Object.assign({ isHidden: false }, req.query)).exec();
-            if (labUsages) {
+            if (labUsages.length) {
                 log_1.default(statuses_1.STATUSES.SUCCESS, "Get all lab usages successfully");
                 res.status(200).json({
                     message: log_1.message(statuses_1.STATUSES.SUCCESS, "Get all lab usages successfully"),
@@ -83,7 +83,6 @@ router.post("/generate", (req, res, next) => __awaiter(void 0, void 0, void 0, f
             let registration = yield Registration_1.default.findById({
                 _id: req.body.registration,
             });
-            yield LabUsage_1.default.deleteMany({});
             let oldLabs = yield Lab_1.default.find({
                 isHidden: false,
                 isAvailableForCurrentUsing: true,
@@ -184,7 +183,7 @@ router.post("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function*
     }));
 }));
 router.put("/:id", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    requireRoles_1.default([types_1.ROLES.ADMIN], req, res, next, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    requireRoles_1.default([types_1.ROLES.ADMIN, types_1.ROLES.LECTURER], req, res, next, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             let oldLabUsage = yield LabUsage_1.default.findById({
                 _id: req.params.id,
@@ -212,7 +211,7 @@ router.put("/:id", (req, res, next) => __awaiter(void 0, void 0, void 0, functio
             let newLabUsage = yield LabUsage_1.default.findByIdAndUpdate({
                 _id: req.params.id,
                 isHidden: false,
-            }, { $set: req.body }, { new: true });
+            }, { $set: req.body }, { new: true, upsert: true });
             for (let i = newLabUsage.startPeriod; i <= newLabUsage.endPeriod; i++) {
                 labSchedule[i + 15 * labs.findIndex((lab) => lab._id == newLabUsage.lab)][newLabUsage.weekNo * 7 + newLabUsage.dayOfWeek] = 1;
             }

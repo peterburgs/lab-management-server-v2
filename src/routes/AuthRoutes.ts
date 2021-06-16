@@ -21,10 +21,7 @@ router.get("/", async (req, res, next) => {
     if (!user) {
       log(STATUSES.ERROR, "Cannot find user with email " + req.body.user.email);
       return res.status(404).json({
-        message: message(
-          STATUSES.ERROR,
-          "Cannot find user with email " + req.body.user.email
-        ),
+        message: "Email " + req.body.user.email + " not found",
         verifiedUser: null,
         avatarUrl: null,
         verifiedRole: null,

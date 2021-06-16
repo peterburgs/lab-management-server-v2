@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { Router } from "express";
 import log, { message } from "../util/log";
 import { STATUSES } from "../common/statuses";
@@ -105,6 +106,50 @@ router.post("/", async (req, res, next) => {
         message: message(STATUSES.ERROR, error.message),
         lab: null,
       });
+    }
+  });
+});
+
+// POST method: create many labs
+router.post("/bulk", async (req, res, next) => {
+  requireRole([ROLES.ADMIN], req, res, next, async (req, res, next) => {
+    let labs = req.body.labs;
+    const session = await mongoose.startSession();
+    try {
+      await session.withTransaction(async () => {
+        for (let index = 0; index < labs.length; index++) {
+          // Validate lab
+
+          let lab: ILab = new Lab({
+            labName: labs[index].labName,
+            capacity: labs[index].capacity,
+            isHidden: labs[index].isHidden,
+            isAvailableForCurrentUsing: labs[index].isAvailableForCurrentUsing,
+          });
+          lab = await lab.save({ session });
+          labs[index]._id = lab._id;
+          if (!lab) {
+            log(STATUSES.ERROR, "Cannot create lab");
+            res.status(500).json({
+              message: message(STATUSES.ERROR, "Cannot create lab"),
+              labs: [],
+            });
+            session.abortTransaction();
+          }
+        }
+        await session.commitTransaction();
+        log(STATUSES.SUCCESS, "Create new lab successfully");
+        res.status(201).json({
+          message: message(STATUSES.SUCCESS, "Create new lab successfully"),
+        });
+      });
+    } catch (error) {
+      log(STATUSES.ERROR, error.message);
+      res.status(500).json({
+        message: message(STATUSES.ERROR, error.message),
+      });
+    } finally {
+      session.endSession();
     }
   });
 });

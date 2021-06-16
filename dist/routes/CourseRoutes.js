@@ -31,6 +31,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const mongoose_1 = __importDefault(require("mongoose"));
 const express_1 = require("express");
 const log_1 = __importStar(require("../util/log"));
 const statuses_1 = require("../common/statuses");
@@ -105,6 +106,50 @@ router.post("/", (req, res, next) => __awaiter(void 0, void 0, void 0, function*
                 message: log_1.message(statuses_1.STATUSES.ERROR, error.message),
                 course: null,
             });
+        }
+    }));
+}));
+router.post("/bulk", (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    requireRoles_1.default([types_1.ROLES.ADMIN], req, res, next, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+        let courses = req.body.courses;
+        const session = yield mongoose_1.default.startSession();
+        try {
+            yield session.withTransaction(() => __awaiter(void 0, void 0, void 0, function* () {
+                for (let index = 0; index < courses.length; index++) {
+                    let course = new Course_1.default({
+                        _id: courses[index]._id,
+                        courseName: courses[index].courseName,
+                        numberOfCredits: courses[index].numberOfCredits,
+                        type: courses[index].type,
+                        isHidden: courses[index].isHidden,
+                    });
+                    course = yield course.save({ session });
+                    courses[index]._id = course._id;
+                    if (!course) {
+                        log_1.default(statuses_1.STATUSES.ERROR, "Cannot create course");
+                        res.status(500).json({
+                            message: log_1.message(statuses_1.STATUSES.ERROR, "Cannot create course"),
+                            courses: [],
+                        });
+                        session.abortTransaction();
+                    }
+                }
+                yield session.commitTransaction();
+                log_1.default(statuses_1.STATUSES.SUCCESS, "Create new course successfully");
+                log_1.default(statuses_1.STATUSES.INFO, courses);
+                res.status(201).json({
+                    message: log_1.message(statuses_1.STATUSES.SUCCESS, "Create new course successfully"),
+                });
+            }));
+        }
+        catch (error) {
+            log_1.default(statuses_1.STATUSES.ERROR, error.message);
+            res.status(500).json({
+                message: log_1.message(statuses_1.STATUSES.ERROR, error.message),
+            });
+        }
+        finally {
+            session.endSession();
         }
     }));
 }));

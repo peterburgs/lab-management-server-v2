@@ -31,7 +31,7 @@ const semesterSchema: Schema = new Schema(
     status: {
       type: SEMESTER_STATUSES,
       required: true,
-      default: true,
+      default: 1,
     },
     labSchedule: {
       type: Array,

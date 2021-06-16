@@ -43,7 +43,22 @@ router.use(requireAuth_1.default);
 router.get("/", (req, res, next) => {
     requireRoles_1.default([types_1.ROLES.ADMIN, types_1.ROLES.LECTURER], req, res, next, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const semesters = yield Semester_1.default.find(Object.assign({ isHidden: false }, req.query)).exec();
+            const { status } = req.query;
+            console.log(status);
+            const _status = Number(status);
+            let semesters = [];
+            console.log(req.query);
+            if (Object.entries(req.query).length) {
+                semesters = yield Semester_1.default.find({
+                    isHidden: false,
+                    status: _status,
+                }).exec();
+            }
+            else {
+                semesters = yield Semester_1.default.find({
+                    isHidden: false,
+                }).exec();
+            }
             if (semesters.length) {
                 log_1.default(statuses_1.STATUSES.SUCCESS, "Get all semesters successfully");
                 res.status(200).json({

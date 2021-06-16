@@ -43,6 +43,11 @@ const userSchema = new mongoose_1.Schema({
         type: String,
         required: false,
     },
+    isFaceIdVerified: {
+        type: Boolean,
+        required: false,
+        default: false,
+    },
     isHidden: {
         type: Boolean,
         required: false,

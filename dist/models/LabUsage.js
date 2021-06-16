@@ -60,6 +60,14 @@ const labUsageSchema = new mongoose_1.Schema({
         min: types_1.PERIOD.ONE,
         max: types_1.PERIOD.SIXTEENTH,
     },
+    checkInAt: {
+        type: Date,
+        required: false,
+    },
+    checkOutAt: {
+        type: Date,
+        required: false,
+    },
     isHidden: {
         type: Boolean,
         required: false,
