@@ -6,6 +6,7 @@ import { STATUSES } from "./common/statuses";
 import morgan from "morgan";
 import cors from "cors";
 import * as functions from "firebase-functions";
+
 // Notify
 log(STATUSES.INFO, "Initializing server");
 // Env
