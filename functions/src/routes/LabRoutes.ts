@@ -68,15 +68,14 @@ router.post("/", async (req, res, next) => {
       });
       if (semester) {
         let { labSchedule } = semester;
-        if (labSchedule.length) {
-  
-          let extra = Array(PERIOD.SIXTEENTH)
-            .fill(0)
-            .map(() => Array(semester!.numberOfWeeks * 7).fill(0));
-          labSchedule = labSchedule.concat(extra);
-          semester.labSchedule = labSchedule;
-          semester = await semester.save();
-}
+
+        let extra = Array(PERIOD.SIXTEENTH)
+          .fill(0)
+          .map(() => Array(semester!.numberOfWeeks * 7).fill(0));
+        labSchedule = labSchedule.concat(extra);
+        semester.labSchedule = labSchedule;
+        semester = await semester.save();
+        console.log("*** Hello World");
       }
     }
     let lab: ILab = new Lab({

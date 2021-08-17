@@ -6,6 +6,7 @@ import { STATUSES } from "./common/statuses";
 import morgan from "morgan";
 import cors from "cors";
 import * as functions from "firebase-functions";
+
 // Notify
 log(STATUSES.INFO, "Initializing server");
 // Env
@@ -30,6 +31,9 @@ import academicYearRoutes from "./routes/AcademicYearRoutes";
 // Config app
 const port = 3001;
 const app: Application = express();
+
+// Prevent CORS errors
+app.use(cors());
 const API_URL = process.env.API_URL;
 
 // Connect to DB
@@ -42,8 +46,6 @@ app.use(
   morgan("Method=:method |URL= :url |Status= :status | :response-time ms\n")
 );
 
-// Prevent CORS errors
-app.use(cors());
 // Handle header
 app.use((req: Request, res: Response, next: NextFunction) => {
   res.header(
