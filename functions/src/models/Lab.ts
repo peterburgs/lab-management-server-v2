@@ -7,6 +7,7 @@ const labSchema: Schema = new Schema(
     labName: {
       type: String,
       required: true,
+      unique: true,
     },
     capacity: {
       type: Number,

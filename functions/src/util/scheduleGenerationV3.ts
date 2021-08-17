@@ -123,9 +123,20 @@ const scheduleGenerationV3 = async (
           }
         }
       }
+      await Semester.findByIdAndUpdate(
+        {
+          _id: semester?._id,
+          isHidden: false,
+        },
+        {
+          $set: { labSchedule: labSchedule },
+        },
+        {
+          new: true,
+          session: session,
+        }
+      );
       await session.commitTransaction();
-      semester!.labSchedule = labSchedule;
-      await semester!.save({ session });
     });
   } catch (error) {
     log(STATUSES.ERROR, error.message);

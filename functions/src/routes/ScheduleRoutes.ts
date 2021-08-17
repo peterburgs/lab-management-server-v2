@@ -250,27 +250,25 @@ router.put("/:id", async (req, res, next) => {
             i + 15 * labs.findIndex((lab) => lab._id == newLabUsage!.lab)
           ][newLabUsage!.weekNo * 7 + newLabUsage!.dayOfWeek] = 1;
         }
-        semester!.labSchedule = labSchedule;
-        semester = await semester!.save();
-        if (semester) {
-          log(STATUSES.SUCCESS, "Update semester, lab schedule successfully");
-          res.status(200).json({
-            message: message(
-              STATUSES.SUCCESS,
-              "Update semester, lab schedule successfully"
-            ),
-            labUsage: newLabUsage,
-          });
-        } else {
-          log(STATUSES.ERROR, "Cannot update semester, lab schedule");
-          res.status(200).json({
-            message: message(
-              STATUSES.ERROR,
-              "Cannot update semester, lab schedule successfully"
-            ),
-            labUsage: null,
-          });
-        }
+        await Semester.findByIdAndUpdate(
+          {
+            _id: semester?._id,
+            isHidden: false,
+          },
+          {
+            $set: { labSchedule: labSchedule },
+          },
+          { new: true }
+        );
+
+        log(STATUSES.SUCCESS, "Update semester, lab schedule successfully");
+        res.status(200).json({
+          message: message(
+            STATUSES.SUCCESS,
+            "Update semester, lab schedule successfully"
+          ),
+          labUsage: newLabUsage,
+        });
       } catch (error) {
         log(STATUSES.ERROR, error.message);
         res.status(500).json({
