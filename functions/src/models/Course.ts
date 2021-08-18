@@ -1,7 +1,6 @@
-import mongoose, { model, Model, Schema, Document, Mongoose } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import { ICourse, COURSE_TYPES } from "../types";
 
-// Schema
 const courseSchema: Schema = new Schema(
   {
     _id: {
@@ -32,5 +31,4 @@ const courseSchema: Schema = new Schema(
   { timestamps: true }
 );
 
-// Export
 export default mongoose.model<ICourse>("Course", courseSchema);

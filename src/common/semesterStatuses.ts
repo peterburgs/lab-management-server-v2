@@ -1,5 +1,0 @@
-export enum SEMESTER_STATUSES {
-  CLOSED,
-  OPENING,
-  FUTURE,
-}

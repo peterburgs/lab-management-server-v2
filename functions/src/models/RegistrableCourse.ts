@@ -1,7 +1,6 @@
-import mongoose, { model, Model, Schema, Document, Mongoose } from "mongoose";
-import { IRegistrableCourse, DAY_OF_WEEKS, PERIOD } from "../types";
+import mongoose, { Schema } from "mongoose";
+import { IRegistrableCourse } from "../types";
 
-// Schema
 const registrableCourseSchema: Schema = new Schema(
   {
     registration: {
@@ -23,7 +22,6 @@ const registrableCourseSchema: Schema = new Schema(
   { timestamps: true }
 );
 
-// Export
 export default mongoose.model<IRegistrableCourse>(
   "RegistrableCourse",
   registrableCourseSchema

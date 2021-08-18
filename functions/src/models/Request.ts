@@ -1,9 +1,8 @@
-import mongoose, { model, Model, Schema, Document, Mongoose } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import { IRequest } from "../types";
 import { REQUEST_STATUSES } from "../common/requestStatuses";
 import { REQUEST_TYPES } from "../common/requestTypes";
 
-// Schema
 const requestSchema: Schema = new Schema(
   {
     lab: {
@@ -87,5 +86,4 @@ const requestSchema: Schema = new Schema(
   { timestamps: true }
 );
 
-// Export
 export default mongoose.model<IRequest>("Request", requestSchema);

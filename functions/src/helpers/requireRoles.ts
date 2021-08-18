@@ -1,9 +1,9 @@
-import { ROLES, IUser } from "../types";
+import { ROLES } from "../types";
 import { Request, Response, NextFunction } from "express";
 import User from "../models/User";
 import { STATUSES } from "../common/statuses";
-import log, { message } from "../util/log";
-// Define
+import { message } from "../util/log";
+
 const requireRole = async (
   routeRoles: ROLES[],
   req: Request,
@@ -18,7 +18,6 @@ const requireRole = async (
     }).exec();
     if (user) {
       if (!user.roles.some((r) => routeRoles.includes(r))) {
-        console.log("Permission denied");
         return res.status(401).json({
           message: message(STATUSES.ERROR, "Permission denied"),
         });

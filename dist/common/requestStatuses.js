@@ -1,9 +1,0 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.REQUEST_STATUSES = void 0;
-var REQUEST_STATUSES;
-(function (REQUEST_STATUSES) {
-    REQUEST_STATUSES[REQUEST_STATUSES["PENDING"] = 0] = "PENDING";
-    REQUEST_STATUSES[REQUEST_STATUSES["APPROVED"] = 1] = "APPROVED";
-    REQUEST_STATUSES[REQUEST_STATUSES["DENIED"] = 2] = "DENIED";
-})(REQUEST_STATUSES = exports.REQUEST_STATUSES || (exports.REQUEST_STATUSES = {}));

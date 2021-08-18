@@ -1,19 +1,10 @@
-// Import libraries
 import express, { Request, Response, NextFunction, Application } from "express";
 import connect from "./connect";
 import log from "./util/log";
-import { STATUSES } from "./common/statuses";
 import morgan from "morgan";
 import cors from "cors";
 import * as functions from "firebase-functions";
-
-// Notify
-log(STATUSES.INFO, "Initializing server");
-// Env
 import * as dotenv from "dotenv";
-dotenv.config();
-
-// Import Routes
 import authRoutes from "./routes/AuthRoutes";
 import courseRoutes from "./routes/CourseRoutes";
 import labRoutes from "./routes/LabRoutes";
@@ -25,28 +16,18 @@ import teachingRoutes from "./routes/TeachingRoutes";
 import userRoutes from "./routes/UserRoutes";
 import requestRoutes from "./routes/RequestRoutes";
 import commentRoutes from "./routes/CommentRoutes";
-import systemlogRoutes from "./routes/SystemlogRoutes";
 import academicYearRoutes from "./routes/AcademicYearRoutes";
 
-// Config app
-const port = 3001;
 const app: Application = express();
-
-// Prevent CORS errors
+dotenv.config();
 app.use(cors());
 const API_URL = process.env.API_URL;
-
-// Connect to DB
 connect(process.env.CONNECTION_STRING!.toString());
-
-// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
   morgan("Method=:method |URL= :url |Status= :status | :response-time ms\n")
 );
-
-// Handle header
 app.use((req: Request, res: Response, next: NextFunction) => {
   res.header(
     "Access-Control-Allow-Headers",
@@ -62,7 +43,6 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   }
   next();
 });
-// Define URL
 
 app.get(`${API_URL}`, (req: Request, res: Response) => {
   res.status(200).json({
@@ -80,17 +60,14 @@ app.use(`${API_URL}/teachings`, teachingRoutes);
 app.use(`${API_URL}/users`, userRoutes);
 app.use(`${API_URL}/requests`, requestRoutes);
 app.use(`${API_URL}/comments`, commentRoutes);
-app.use(`${API_URL}/systemlogs`, systemlogRoutes);
 app.use(`${API_URL}/academic-years`, academicYearRoutes);
 
-// Handle 404 error
 app.use((req: Request, res: Response, next: NextFunction) => {
   const error: NodeJS.ErrnoException = new Error("Page Not Found!");
   error.code = "404";
   next(error);
 });
 
-// Handle other error codes
 app.use(
   (
     error: NodeJS.ErrnoException,
@@ -106,9 +83,5 @@ app.use(
     });
   }
 );
-
-// app.listen(port, () =>
-//   log(STATUSES.SUCCESS, `Server is running on port ${port}`)
-// );
 
 exports.app = functions.https.onRequest(app);

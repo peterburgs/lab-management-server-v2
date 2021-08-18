@@ -1,14 +1,11 @@
-import express, { Router, Response, NextFunction } from "express";
-import mongoose from "mongoose";
+import { Router } from "express";
 import log, { message } from "../util/log";
 import { STATUSES } from "../common/statuses";
-import { ROLES, IUser, IRequest, IComment } from "../types";
+import { ROLES, IComment } from "../types";
 import requireAuth from "../helpers/requireAuth";
 import requireRole from "../helpers/requireRoles";
 
 // Import models
-import User from "../models/User";
-import Request from "../models/Request";
 import Comment from "../models/Comment";
 
 // Config router
@@ -29,14 +26,12 @@ router.get("/", (req, res, next) => {
           ...req.query,
         }).exec();
         if (comments.length) {
-          log(STATUSES.SUCCESS, "Get all comments successfully");
           res.status(200).json({
             message: message(STATUSES.SUCCESS, "Get all comments successfully"),
             count: comments.length,
             comments,
           });
         } else {
-          log(STATUSES.ERROR, "Cannot get comments");
           res.status(404).json({
             message: message(STATUSES.ERROR, "Cannot get comments"),
             count: 0,
@@ -44,7 +39,7 @@ router.get("/", (req, res, next) => {
           });
         }
       } catch (error) {
-        log(STATUSES.ERROR, error.message);
+        log(STATUSES.INFO, error.message);
         res.status(500).json({
           message: message(STATUSES.ERROR, error.message),
           count: 0,
@@ -85,6 +80,7 @@ router.post("/", async (req, res, next) => {
           });
         }
       } catch (error) {
+        log(STATUSES.INFO, error.message);
         res.status(500).json({
           message: message(STATUSES.ERROR, error.message),
           comment: null,
@@ -123,6 +119,8 @@ router.post("/:id", async (req, res, next) => {
           });
         }
       } catch (error) {
+        log(STATUSES.INFO, error.message);
+
         res.status(500).json({
           message: message(STATUSES.ERROR, error.message),
           comment: null,

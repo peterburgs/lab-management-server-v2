@@ -1,28 +1,11 @@
-import express, { Router, Request, Response, NextFunction } from "express";
-import mongoose from "mongoose";
+import { Router } from "express";
 import log, { message } from "../util/log";
 import { STATUSES } from "../common/statuses";
-import {
-  ROLES,
-  IUser,
-  ISemester,
-  ICourse,
-  IRegistration,
-  ITeaching,
-  IAcademicYear,
-} from "../types";
+import { ROLES, IAcademicYear } from "../types";
 import requireAuth from "../helpers/requireAuth";
 import requireRole from "../helpers/requireRoles";
-
-// Import models
-import User from "../models/User";
-import Semester from "../models/Semester";
-import Course from "../models/Course";
-import Registration from "../models/Registration";
-import Teaching from "../models/Teaching";
 import AcademicYear from "../models/AcademicYear";
 
-// Config router
 const router = Router();
 router.use(requireAuth);
 
@@ -40,7 +23,6 @@ router.get("/", (req, res, next) => {
           ...req.query,
         }).exec();
         if (academicYears.length) {
-          log(STATUSES.SUCCESS, "Get all academic years successfully");
           res.status(200).json({
             message: message(
               STATUSES.SUCCESS,
@@ -50,7 +32,6 @@ router.get("/", (req, res, next) => {
             academicYears,
           });
         } else {
-          log(STATUSES.ERROR, "Cannot get academic years");
           res.status(404).json({
             message: message(STATUSES.ERROR, "Cannot get academic years"),
             count: 0,
@@ -58,7 +39,7 @@ router.get("/", (req, res, next) => {
           });
         }
       } catch (error) {
-        log(STATUSES.ERROR, error.message);
+        log(STATUSES.INFO, error.message);
         res.status(500).json({
           message: message(STATUSES.ERROR, error.message),
           count: 0,
@@ -82,7 +63,6 @@ router.post("/", async (req, res, next) => {
     try {
       academicYear = await academicYear.save();
       if (academicYear) {
-        log(STATUSES.CREATED, "Create new academic year successfully");
         res.status(201).json({
           message: message(
             STATUSES.CREATED,
@@ -91,14 +71,13 @@ router.post("/", async (req, res, next) => {
           academicYear,
         });
       } else {
-        log(STATUSES.ERROR, "Cannot create new academic year");
         res.status(500).json({
           message: message(STATUSES.ERROR, "Cannot create new academic year"),
           academicYear: null,
         });
       }
     } catch (error) {
-      log(STATUSES.ERROR, error.message);
+      log(STATUSES.INFO, error.message);
       res.status(500).json({
         message: message(STATUSES.ERROR, error.message),
         academicYear: null,
@@ -122,7 +101,6 @@ router.put("/:id", async (req, res, next) => {
         { new: true }
       ).exec();
       if (academicYear) {
-        log(STATUSES.SUCCESS, "Update academic year successfully");
         res.status(200).json({
           message: message(
             STATUSES.SUCCESS,
@@ -131,14 +109,13 @@ router.put("/:id", async (req, res, next) => {
           academicYear,
         });
       } else {
-        log(STATUSES.ERROR, "Cannot update academic year");
         res.status(422).json({
           message: message(STATUSES.ERROR, "Cannot update academic year"),
           academicYear: null,
         });
       }
     } catch (error) {
-      log(STATUSES.ERROR, error.message);
+      log(STATUSES.INFO, error.message);
       res.status(500).json({
         message: message(STATUSES.ERROR, error.message),
         academicYear: null,
@@ -147,5 +124,4 @@ router.put("/:id", async (req, res, next) => {
   });
 });
 
-// Export
 export default router;

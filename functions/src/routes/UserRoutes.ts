@@ -1,15 +1,11 @@
-import express, { Router, Request, Response, NextFunction } from "express";
-import mongoose from "mongoose";
+import { Router } from "express";
 import log, { message } from "../util/log";
 import { STATUSES } from "../common/statuses";
 import { ROLES, IUser } from "../types";
 import requireAuth from "../helpers/requireAuth";
 import requireRole from "../helpers/requireRoles";
-
-// Import models
 import User from "../models/User";
 
-// Config router
 const router = Router();
 router.use(requireAuth);
 
@@ -24,15 +20,12 @@ router.get("/", (req, res, next) => {
       try {
         const users = await User.find({ isHidden: false, ...req.query }).exec();
         if (users.length) {
-          log(STATUSES.SUCCESS, "Get all users successfully");
-          log(STATUSES.INFO, users);
           res.status(200).json({
             message: message(STATUSES.SUCCESS, "Get all users successfully"),
             count: users.length,
             users,
           });
         } else {
-          log(STATUSES.ERROR, "Cannot get users");
           res.status(404).json({
             message: message(STATUSES.ERROR, "Cannot get users"),
             count: 0,
@@ -63,18 +56,14 @@ router.post("/", async (req, res, next) => {
       isFaceIdVerified: req.body.isFaceIdVerified,
       isHidden: req.body.isHidden,
     });
-    console.log(user);
     try {
       user = await user.save();
       if (user) {
-        log(STATUSES.CREATED, "Create new user successfully");
-        log(STATUSES.INFO, user);
         res.status(201).json({
           message: message(STATUSES.CREATED, "Create new user successfully"),
           user,
         });
       }
-      console.log(user);
     } catch (error) {
       log(STATUSES.ERROR, error.message);
       res.status(500).json({
@@ -105,13 +94,11 @@ router.put("/:id", async (req, res, next) => {
           { new: true, upsert: true }
         ).exec();
         if (user) {
-          log(STATUSES.SUCCESS, "Update user successfully");
           res.status(200).json({
             message: message(STATUSES.SUCCESS, "Update user successfully"),
             user,
           });
         } else {
-          log(STATUSES.ERROR, "Cannot update user");
           res.status(422).json({
             message: message(STATUSES.ERROR, "Cannot update user"),
             user: null,
@@ -143,14 +130,11 @@ router.delete("/:id", async (req, res, next) => {
         { new: true }
       ).exec();
       if (deletedUser) {
-        log(STATUSES.SUCCESS, "Delete user successfully");
-        log(STATUSES.INFO, deletedUser);
         res.status(200).json({
           message: message(STATUSES.SUCCESS, "Delete user successfully"),
           user: deletedUser,
         });
       } else {
-        log(STATUSES.ERROR, "Cannot delete user");
         res.status(500).json({
           message: message(STATUSES.ERROR, "Cannot delete user"),
           user: null,
@@ -166,5 +150,4 @@ router.delete("/:id", async (req, res, next) => {
   });
 });
 
-// Export
 export default router;

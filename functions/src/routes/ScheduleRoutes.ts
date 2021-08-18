@@ -1,24 +1,17 @@
 import { Router } from "express";
 import log, { message } from "../util/log";
 import { STATUSES } from "../common/statuses";
-import { ROLES, ILabUsage, PERIOD, ISemester } from "../types";
-import ScheduleGeneration from "../util/scheduleGeneration";
-import scheduleGenerationV2 from "../util/scheduleGenerationV2";
+import { ROLES, ILabUsage, PERIOD } from "../types";
 import scheduleGenerationV3 from "../util/scheduleGenerationV3";
 import moment from "moment";
-
-// Middleware
 import requireAuth from "../helpers/requireAuth";
 import requireRole from "../helpers/requireRoles";
-
-// Import models
 import Semester from "../models/Semester";
 import Teaching from "../models/Teaching";
 import LabUsage from "../models/LabUsage";
 import Lab from "../models/Lab";
 import Registration from "../models/Registration";
 
-// Config router
 const router = Router();
 router.use(requireAuth);
 
@@ -36,7 +29,6 @@ router.get("/", (req, res, next) => {
           ...req.query,
         }).exec();
         if (labUsages.length) {
-          log(STATUSES.SUCCESS, "Get all lab usages successfully");
           res.status(200).json({
             message: message(
               STATUSES.SUCCESS,
@@ -46,7 +38,6 @@ router.get("/", (req, res, next) => {
             labUsages,
           });
         } else {
-          log(STATUSES.ERROR, "Cannot get lab usages");
           res.status(404).json({
             message: message(STATUSES.ERROR, "Cannot get lab usages"),
             count: 0,
@@ -68,13 +59,10 @@ router.get("/", (req, res, next) => {
 // POST method: generate new schedule
 router.post("/generate", async (req, res, next) => {
   requireRole([ROLES.ADMIN], req, res, next, async (req, res, next) => {
-    // Apply algorithms to generate schedule
     try {
       let registration = await Registration.findById({
         _id: req.body.registration,
       });
-      // Uncomment this line to self destroy like Dr. Doofenshmirtz
-      // await LabUsage.deleteMany({});
       let oldLabs = await Lab.find({
         isHidden: false,
         isAvailableForCurrentUsing: true,
@@ -90,7 +78,6 @@ router.post("/generate", async (req, res, next) => {
       let semester = await Semester.findById({
         _id: registration!.semester,
       });
-      // Apply algorithm
       let _schedule = await scheduleGenerationV3(
         oldLabs,
         newLabs,
@@ -153,7 +140,6 @@ router.post("/", async (req, res, next) => {
         semester!.labSchedule = labSchedule;
         semester = await semester!.save();
         if (semester) {
-          log(STATUSES.SUCCESS, "Update semester, lab schedule successfully");
           res.status(200).json({
             message: message(
               STATUSES.SUCCESS,
@@ -162,7 +148,6 @@ router.post("/", async (req, res, next) => {
             labUsage: labUsage,
           });
         } else {
-          log(STATUSES.ERROR, "Cannot update semester, lab schedule");
           res.status(200).json({
             message: message(
               STATUSES.ERROR,
@@ -186,6 +171,7 @@ router.post("/", async (req, res, next) => {
         });
       }
     } catch (error) {
+      log(STATUSES.ERROR, error.message);
       res.status(500).json({
         message: message(STATUSES.SUCCESS, "Cannot create new lab usage"),
         labUsage: null,
@@ -260,8 +246,6 @@ router.put("/:id", async (req, res, next) => {
           },
           { new: true }
         );
-
-        log(STATUSES.SUCCESS, "Update semester, lab schedule successfully");
         res.status(200).json({
           message: message(
             STATUSES.SUCCESS,
@@ -295,13 +279,11 @@ router.delete("/:id", async (req, res, next) => {
         { new: true }
       ).exec();
       if (deletedLabUsage) {
-        log(STATUSES.SUCCESS, "Delete labUsage successfully");
         res.status(200).json({
           message: message(STATUSES.SUCCESS, "Delete labUsage successfully"),
           labUsage: deletedLabUsage,
         });
       } else {
-        log(STATUSES.ERROR, "Cannot delete labUsage");
         res.status(500).json({
           message: message(STATUSES.ERROR, "Cannot delete labUsage"),
           labUsage: null,
@@ -317,5 +299,4 @@ router.delete("/:id", async (req, res, next) => {
   });
 });
 
-// Export
 export default router;

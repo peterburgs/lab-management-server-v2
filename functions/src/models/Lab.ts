@@ -1,7 +1,6 @@
-import mongoose, { model, Model, Schema, Document, Mongoose } from "mongoose";
-import { ILab, DAY_OF_WEEKS, PERIOD } from "../types";
+import mongoose, { Schema } from "mongoose";
+import { ILab } from "../types";
 
-// Schema
 const labSchema: Schema = new Schema(
   {
     labName: {
@@ -13,6 +12,10 @@ const labSchema: Schema = new Schema(
       type: Number,
       required: true,
       min: 0,
+    },
+    description: {
+      type: String,
+      required: false,
     },
     isAvailableForCurrentUsing: {
       type: Boolean,
@@ -27,5 +30,4 @@ const labSchema: Schema = new Schema(
   { timestamps: true }
 );
 
-// Export
 export default mongoose.model<ILab>("Lab", labSchema);

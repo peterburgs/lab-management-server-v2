@@ -1,8 +1,6 @@
-import express, { Router, Request, Response, NextFunction } from "express";
+import { Router } from "express";
 import requireAuth from "../helpers/requireAuth";
-import requireRole from "../helpers/requireRoles";
 import User from "../models/User";
-import { ROLES } from "../types";
 import log, { message } from "../util/log";
 import { STATUSES } from "../common/statuses";
 
@@ -19,7 +17,6 @@ router.get("/", async (req, res, next) => {
     });
     // If user not found
     if (!user) {
-      log(STATUSES.ERROR, "Cannot find user with email " + req.body.user.email);
       return res.status(404).json({
         message: "Email " + req.body.user.email + " not found",
         verifiedUser: null,
@@ -31,10 +28,8 @@ router.get("/", async (req, res, next) => {
 
     // If Found user
     if (user.roles.includes(Number(req.query.role))) {
-      log(STATUSES.INFO, req.body.user);
       if (!user.avatarUrl) {
         user.avatarUrl = req.body.user.picture;
-        console.log(user.avatarUrl);
       }
       user = await user.save();
       res.status(200).json({
@@ -57,6 +52,7 @@ router.get("/", async (req, res, next) => {
       });
     }
   } catch (error) {
+    log(STATUSES.INFO, error.message);
     res.status(500).json({
       message: message(STATUSES.ERROR, error.message),
       verifiedUser: null,
@@ -67,5 +63,4 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-// Export
 export default router;

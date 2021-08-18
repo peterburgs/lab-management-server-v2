@@ -1,27 +1,13 @@
-import express, { Router, Request, Response, NextFunction } from "express";
+import { Router } from "express";
 import mongoose from "mongoose";
 import log, { message } from "../util/log";
 import { STATUSES } from "../common/statuses";
-import {
-  ROLES,
-  IUser,
-  ISemester,
-  ICourse,
-  IRegistration,
-  ITeaching,
-} from "../types";
+import { ROLES, ITeaching } from "../types";
 import requireAuth from "../helpers/requireAuth";
 import requireRole from "../helpers/requireRoles";
-
-// Import models
-import User from "../models/User";
-import Semester from "../models/Semester";
 import Course from "../models/Course";
-import Registration from "../models/Registration";
 import Teaching from "../models/Teaching";
-import { stringify } from "querystring";
 
-// Config router
 const router = Router();
 router.use(requireAuth);
 
@@ -39,7 +25,6 @@ router.get("/", (req, res, next) => {
           ...req.query,
         }).exec();
         if (teachings) {
-          log(STATUSES.SUCCESS, "Get all teachings successfully");
           res.status(200).json({
             message: message(
               STATUSES.SUCCESS,
@@ -49,7 +34,6 @@ router.get("/", (req, res, next) => {
             teachings,
           });
         } else {
-          log(STATUSES.ERROR, "Cannot get teachings");
           res.status(404).json({
             message: message(STATUSES.ERROR, "Cannot get teachings"),
             count: 0,
@@ -90,8 +74,6 @@ router.post("/", async (req, res, next) => {
     try {
       teaching = await teaching.save();
       if (teaching) {
-        log(STATUSES.CREATED, "Create new teaching successfully");
-        log(STATUSES.INFO, teaching);
         res.status(201).json({
           message: message(
             STATUSES.CREATED,
@@ -100,7 +82,6 @@ router.post("/", async (req, res, next) => {
           teaching,
         });
       } else {
-        log(STATUSES.ERROR, "Cannot create new teaching");
         res.status(500).json({
           message: message(STATUSES.ERROR, "Cannot create new teaching"),
           teaching: null,
@@ -124,7 +105,6 @@ router.post("/bulk", async (req, res, next) => {
     try {
       await session.withTransaction(async () => {
         for (let index = 0; index < teachings.length; index++) {
-          // Validate course
           let course = await Course.findOne(
             {
               _id: teachings[index].course,
@@ -155,7 +135,6 @@ router.post("/bulk", async (req, res, next) => {
           teaching = await teaching.save({ session });
           teachings[index]._id = teaching._id;
           if (!teaching) {
-            log(STATUSES.ERROR, "Cannot create teaching");
             res.status(500).json({
               message: message(STATUSES.ERROR, "Cannot create teaching"),
               teachings: [],
@@ -164,8 +143,6 @@ router.post("/bulk", async (req, res, next) => {
           }
         }
         await session.commitTransaction();
-        log(STATUSES.SUCCESS, "Create new teaching successfully");
-        log(STATUSES.INFO, teachings);
         res.status(201).json({
           message: message(
             STATUSES.SUCCESS,
@@ -175,7 +152,6 @@ router.post("/bulk", async (req, res, next) => {
         });
       });
     } catch (error) {
-      log(STATUSES.ERROR, error.message);
       res.status(500).json({
         message: message(STATUSES.ERROR, error.message),
       });
@@ -200,13 +176,11 @@ router.put("/:id", async (req, res, next) => {
         { new: true }
       ).exec();
       if (teaching) {
-        log(STATUSES.SUCCESS, "Update teaching successfully");
         res.status(200).json({
           message: message(STATUSES.SUCCESS, "Update teaching successfully"),
           teaching,
         });
       } else {
-        log(STATUSES.ERROR, "Cannot update teaching");
         res.status(422).json({
           message: message(STATUSES.ERROR, "Cannot update teaching"),
           teaching: null,
@@ -237,13 +211,11 @@ router.delete("/:id", async (req, res, next) => {
         { new: true }
       ).exec();
       if (deletedTeaching) {
-        log(STATUSES.SUCCESS, "Delete teaching successfully");
         res.status(200).json({
           message: message(STATUSES.SUCCESS, "Delete teaching successfully"),
           teaching: deletedTeaching,
         });
       } else {
-        log(STATUSES.ERROR, "Cannot delete teaching");
         res.status(500).json({
           message: message(STATUSES.ERROR, "Cannot delete teaching"),
           teaching: null,
@@ -259,5 +231,4 @@ router.delete("/:id", async (req, res, next) => {
   });
 });
 
-// Export
 export default router;

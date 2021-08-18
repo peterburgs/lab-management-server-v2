@@ -101,6 +101,7 @@ export interface IRegistrableCourse extends Document {
 export interface ILab extends Document {
   labName: string;
   capacity: number;
+  description: string;
   isAvailableForCurrentUsing: boolean;
   isHidden: boolean;
   createdAt?: Date;
@@ -143,12 +144,6 @@ export interface IComment extends Document {
   isHidden: boolean;
 }
 
-export interface ISystemlog extends Document {
-  user: string;
-  action: ACTIONS;
-  models: MODELS;
-  modelId: string;
-}
 export interface IAcademicYear extends Document {
   name: string;
   startDate: Date;
