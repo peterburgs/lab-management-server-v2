@@ -1,4 +1,0 @@
-export enum REQUEST_TYPES {
-  MODIFY_LAB_USAGE,
-  ADD_EXTRA_CLASS,
-}

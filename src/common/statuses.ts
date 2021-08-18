@@ -1,8 +1,0 @@
-export enum STATUSES {
-  INFO = "INFO",
-  ERROR = "ERROR",
-  SUCCESS = "SUCCESS",
-  CREATED = "CREATED",
-  DELETED = "DELETED",
-  UPDATED = "UPDATED",
-}
