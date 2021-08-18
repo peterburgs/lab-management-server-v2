@@ -101,6 +101,7 @@ export interface IRegistrableCourse extends Document {
 export interface ILab extends Document {
   labName: string;
   capacity: number;
+  description: string;
   isAvailableForCurrentUsing: boolean;
   isHidden: boolean;
   createdAt?: Date;

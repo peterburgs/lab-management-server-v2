@@ -14,6 +14,10 @@ const labSchema: Schema = new Schema(
       required: true,
       min: 0,
     },
+    description: {
+      type: String,
+      required: false,
+    },
     isAvailableForCurrentUsing: {
       type: Boolean,
       required: true,

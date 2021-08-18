@@ -75,7 +75,6 @@ router.post("/", async (req, res, next) => {
         labSchedule = labSchedule.concat(extra);
         semester.labSchedule = labSchedule;
         semester = await semester.save();
-        console.log("*** Hello World");
       }
     }
     let lab: ILab = new Lab({
@@ -123,6 +122,7 @@ router.post("/bulk", async (req, res, next) => {
           let lab: ILab = new Lab({
             labName: labs[index].labName,
             capacity: labs[index].capacity,
+            description: labs[index].description,
             isHidden: labs[index].isHidden,
             isAvailableForCurrentUsing: labs[index].isAvailableForCurrentUsing,
           });
