@@ -73,6 +73,7 @@ router.post("/", async (req, res, next) => {
     let lab: ILab = new Lab({
       labName: req.body.labName,
       capacity: req.body.capacity,
+      description: req.body.description,
       isAvailableForCurrentUsing: req.body.isAvailableForCurrentUsing,
       isHidden: req.body.isHidden,
     });
