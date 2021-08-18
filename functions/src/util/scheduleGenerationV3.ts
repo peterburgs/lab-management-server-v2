@@ -1,17 +1,12 @@
 import mongoose from "mongoose";
 import _ from "lodash";
-import log, { message } from "./log";
+import log from "./log";
 import { STATUSES } from "../common/statuses";
 import moment from "moment";
-// Models
 import LabUsage from "../models/LabUsage";
-import Teaching from "../models/Teaching";
 import Semester from "../models/Semester";
+import { ILab, ITeaching } from "../types";
 
-// Types
-import { ILabUsage, ILab, ITeaching, ISemester } from "../types";
-
-// Define
 const scheduleGenerationV3 = async (
   oldLabs: ILab[],
   newLabs: ILab[],
@@ -145,5 +140,4 @@ const scheduleGenerationV3 = async (
   }
 };
 
-// Export
 export default scheduleGenerationV3;

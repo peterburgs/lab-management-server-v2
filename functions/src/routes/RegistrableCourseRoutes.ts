@@ -1,28 +1,14 @@
-import express, { Router, Request, Response, NextFunction } from "express";
+import { Router } from "express";
 import mongoose from "mongoose";
 import log, { message } from "../util/log";
 import { STATUSES } from "../common/statuses";
-import {
-  ROLES,
-  IUser,
-  ISemester,
-  ICourse,
-  IRegistration,
-  ILab,
-  IRegistrableCourse,
-} from "../types";
+import { ROLES, IRegistrableCourse } from "../types";
 import requireAuth from "../helpers/requireAuth";
 import requireRole from "../helpers/requireRoles";
-
-// Import models
-import User from "../models/User";
-import Semester from "../models/Semester";
 import Course from "../models/Course";
 import Registration from "../models/Registration";
-import Lab from "../models/Lab";
 import RegistrableCourse from "../models/RegistrableCourse";
 
-// Config router
 const router = Router();
 router.use(requireAuth);
 
@@ -40,7 +26,6 @@ router.get("/", (req, res, next) => {
           ...req.query,
         }).exec();
         if (registrableCourses.length) {
-          log(STATUSES.SUCCESS, "Get all Registrable Courses successfully");
           res.status(200).json({
             message: message(
               STATUSES.SUCCESS,
@@ -50,7 +35,6 @@ router.get("/", (req, res, next) => {
             registrableCourses,
           });
         } else {
-          log(STATUSES.ERROR, "Cannot get Registrable Courses");
           res.status(404).json({
             message: message(STATUSES.ERROR, "Cannot get Registrable Courses"),
             count: 0,
@@ -77,7 +61,6 @@ router.post("/bulk", async (req, res, next) => {
     try {
       await session.withTransaction(async () => {
         for (let index = 0; index < registrableCourses.length; index++) {
-          // Validate registration
           let registration = await Registration.findOne(
             {
               _id: registrableCourses[index].registration,
@@ -89,8 +72,6 @@ router.post("/bulk", async (req, res, next) => {
           if (!registration) {
             session.abortTransaction();
           }
-
-          // Validate course
           let course = await Course.findOne(
             {
               _id: registrableCourses[index].course,
@@ -102,20 +83,13 @@ router.post("/bulk", async (req, res, next) => {
           if (!course) {
             session.abortTransaction();
           }
-          // Only if registration and course are valid then
           let registrableCourse: IRegistrableCourse = new RegistrableCourse({
             registration: registrableCourses[index].registration,
             course: registrableCourses[index].course,
           });
           try {
             registrableCourse = await registrableCourse.save({ session });
-            if (registrableCourse) {
-              log(
-                STATUSES.CREATED,
-                `Create new Registrable Course ${[index]} successfully`
-              );
-            } else {
-              log(STATUSES.ERROR, `Cannot create Registrable Courses`);
+            if (!registrableCourse) {
               res.status(500).json({
                 message: message(
                   STATUSES.ERROR,
@@ -150,10 +124,7 @@ router.post("/bulk", async (req, res, next) => {
         "Create Registrable courses successfully"
       ),
     });
-    log(STATUSES.SUCCESS, "Create Registrable courses successfully");
-    log(STATUSES.INFO, registrableCourses);
   });
 });
 
-// Export
 export default router;

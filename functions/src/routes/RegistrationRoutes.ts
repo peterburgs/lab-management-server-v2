@@ -4,11 +4,8 @@ import { STATUSES } from "../common/statuses";
 import { ROLES, IRegistration } from "../types";
 import requireAuth from "../helpers/requireAuth";
 import requireRole from "../helpers/requireRoles";
-
-// Import models
 import Registration from "../models/Registration";
 
-// Config router
 const router = Router();
 router.use(requireAuth);
 
@@ -26,9 +23,6 @@ router.get("/", (req, res, next) => {
           ...req.query,
         }).exec();
         if (registrations.length) {
-          log(STATUSES.SUCCESS, "Get all registrations successfully");
-          log(STATUSES.INFO, registrations);
-
           res.status(200).json({
             message: message(
               STATUSES.SUCCESS,
@@ -38,7 +32,6 @@ router.get("/", (req, res, next) => {
             registrations,
           });
         } else {
-          log(STATUSES.ERROR, "Cannot get registrations");
           res.status(404).json({
             message: message(STATUSES.ERROR, "Cannot get registrations"),
             count: 0,
@@ -71,8 +64,6 @@ router.post("/", async (req, res, next) => {
     try {
       registration = await registration.save();
       if (registration) {
-        log(STATUSES.CREATED, "Create new registration successfully");
-        log(STATUSES.INFO, registration);
         res.status(201).json({
           message: message(
             STATUSES.CREATED,
@@ -81,7 +72,6 @@ router.post("/", async (req, res, next) => {
           registration,
         });
       } else {
-        log(STATUSES.ERROR, "Cannot create new registration");
         res.status(500).json({
           message: message(STATUSES.ERROR, "Cannot create new registration"),
           registration: null,
@@ -112,8 +102,6 @@ router.put("/:id", async (req, res, next) => {
         { new: true }
       ).exec();
       if (registration) {
-        log(STATUSES.SUCCESS, "Update registration successfully");
-        log(STATUSES.INFO, registration);
         res.status(200).json({
           message: message(
             STATUSES.SUCCESS,
@@ -122,7 +110,6 @@ router.put("/:id", async (req, res, next) => {
           registration,
         });
       } else {
-        log(STATUSES.ERROR, "Cannot update registration");
         res.status(422).json({
           message: message(STATUSES.ERROR, "Cannot update registration"),
           registration: null,
@@ -138,5 +125,4 @@ router.put("/:id", async (req, res, next) => {
   });
 });
 
-// Export
 export default router;

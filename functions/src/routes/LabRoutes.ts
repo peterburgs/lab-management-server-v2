@@ -7,12 +7,9 @@ import { ROLES, ILab, ISemester } from "../types";
 import requireAuth from "../helpers/requireAuth";
 import requireRole from "../helpers/requireRoles";
 import { SEMESTER_STATUSES } from "../common/semesterStatuses";
-
-// Import models
 import Lab from "../models/Lab";
 import Semester from "../models/Semester";
 
-// Config router
 const router = Router();
 router.use(requireAuth);
 
@@ -30,15 +27,12 @@ router.get("/", (req, res, next) => {
           ...req.query,
         }).exec();
         if (labs.length) {
-          log(STATUSES.SUCCESS, "Get all labs successfully");
-          log(STATUSES.INFO, labs);
           res.status(200).json({
             message: message(STATUSES.SUCCESS, "Get all labs successfully"),
             count: labs.length,
             labs,
           });
         } else {
-          log(STATUSES.ERROR, "Cannot get labs");
           res.status(404).json({
             message: message(STATUSES.ERROR, "Cannot get labs"),
             count: 0,
@@ -61,7 +55,6 @@ router.get("/", (req, res, next) => {
 router.post("/", async (req, res, next) => {
   requireRole([ROLES.ADMIN], req, res, next, async (req, res, next) => {
     const isAvailableForCurrentUsing = req.body.isAvailableForCurrentUsing;
-    console.log(isAvailableForCurrentUsing);
     if (!isAvailableForCurrentUsing) {
       let semester: ISemester | null = await Semester.findOne({
         status: SEMESTER_STATUSES.OPENING,
@@ -86,14 +79,11 @@ router.post("/", async (req, res, next) => {
     try {
       lab = await lab.save();
       if (lab) {
-        log(STATUSES.CREATED, "Create new lab successfully");
-        log(STATUSES.INFO, lab);
         res.status(201).json({
           message: message(STATUSES.CREATED, "Create new lab successfully"),
           lab,
         });
       } else {
-        log(STATUSES.ERROR, "Cannot create new lab");
         res.status(500).json({
           message: message(STATUSES.ERROR, "Cannot create new lab"),
           lab: null,
@@ -117,8 +107,6 @@ router.post("/bulk", async (req, res, next) => {
     try {
       await session.withTransaction(async () => {
         for (let index = 0; index < labs.length; index++) {
-          // Validate lab
-
           let lab: ILab = new Lab({
             labName: labs[index].labName,
             capacity: labs[index].capacity,
@@ -129,7 +117,6 @@ router.post("/bulk", async (req, res, next) => {
           lab = await lab.save({ session });
           labs[index]._id = lab._id;
           if (!lab) {
-            log(STATUSES.ERROR, "Cannot create lab");
             res.status(500).json({
               message: message(STATUSES.ERROR, "Cannot create lab"),
               labs: [],
@@ -138,7 +125,6 @@ router.post("/bulk", async (req, res, next) => {
           }
         }
         await session.commitTransaction();
-        log(STATUSES.SUCCESS, "Create new lab successfully");
         res.status(201).json({
           message: message(STATUSES.SUCCESS, "Create new lab successfully"),
         });
@@ -169,14 +155,11 @@ router.put("/:id", async (req, res, next) => {
         { new: true }
       ).exec();
       if (lab) {
-        log(STATUSES.SUCCESS, "Update lab successfully");
-        log(STATUSES.INFO, lab);
         res.status(200).json({
           message: message(STATUSES.SUCCESS, "Update lab successfully"),
           lab,
         });
       } else {
-        log(STATUSES.ERROR, "Cannot update lab");
         res.status(422).json({
           message: message(STATUSES.ERROR, "Cannot update lab"),
           lab: null,
@@ -207,14 +190,11 @@ router.delete("/:id", async (req, res, next) => {
         { new: true }
       ).exec();
       if (deletedLab) {
-        log(STATUSES.SUCCESS, "Delete lab successfully");
-        log(STATUSES.INFO, deletedLab);
         res.status(200).json({
           message: message(STATUSES.SUCCESS, "Delete lab successfully"),
           lab: deletedLab,
         });
       } else {
-        log(STATUSES.ERROR, "Cannot delete lab");
         res.status(500).json({
           message: message(STATUSES.ERROR, "Cannot delete lab"),
           lab: null,
@@ -230,5 +210,4 @@ router.delete("/:id", async (req, res, next) => {
   });
 });
 
-// Export
 export default router;

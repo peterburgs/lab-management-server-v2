@@ -1,7 +1,6 @@
-import mongoose, { model, Model, Schema, Document, Mongoose } from "mongoose";
-import { ICourse, IComment, IAcademicYear } from "../types";
+import mongoose, { Schema } from "mongoose";
+import { IAcademicYear } from "../types";
 
-// Schema
 const academicYearSchema: Schema = new Schema(
   {
     name: {
@@ -33,7 +32,6 @@ const academicYearSchema: Schema = new Schema(
   { timestamps: true }
 );
 
-// Export
 export default mongoose.model<IAcademicYear>(
   "AcademicYear",
   academicYearSchema

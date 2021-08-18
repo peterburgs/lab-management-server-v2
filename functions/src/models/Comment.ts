@@ -1,7 +1,6 @@
-import mongoose, { model, Model, Schema, Document, Mongoose } from "mongoose";
-import { ICourse, IComment } from "../types";
+import mongoose, { Schema } from "mongoose";
+import { IComment } from "../types";
 
-// Schema
 const commentSchema: Schema = new Schema(
   {
     user: {
@@ -27,5 +26,4 @@ const commentSchema: Schema = new Schema(
   { timestamps: true }
 );
 
-// Export
 export default mongoose.model<IComment>("Comment", commentSchema);

@@ -1,9 +1,8 @@
-import mongoose, { model, Model, Schema, Document, Mongoose } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import { ISemester } from "../types";
 import AcademicYear from "./AcademicYear";
 import { SEMESTER_STATUSES } from "../common/semesterStatuses";
 
-// Schema
 const semesterSchema: Schema = new Schema(
   {
     academicYear: {
@@ -50,5 +49,4 @@ const semesterSchema: Schema = new Schema(
   { timestamps: true }
 );
 
-// Export
 export default mongoose.model<ISemester>("Semester", semesterSchema);

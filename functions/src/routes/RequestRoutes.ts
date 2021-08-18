@@ -1,15 +1,12 @@
-import express, { Router, Response, NextFunction } from "express";
-import mongoose from "mongoose";
+import { Router } from "express";
 import log, { message } from "../util/log";
 import { STATUSES } from "../common/statuses";
-import { ROLES, IUser, IRequest } from "../types";
+import { ROLES, IRequest } from "../types";
 import requireAuth from "../helpers/requireAuth";
 import requireRole from "../helpers/requireRoles";
-
-// Import models
 import User from "../models/User";
 import Request from "../models/Request";
-// Config router
+
 const router = Router();
 router.use(requireAuth);
 
@@ -27,14 +24,12 @@ router.get("/", (req, res, next) => {
           ...req.query,
         }).exec();
         if (requests.length) {
-          log(STATUSES.SUCCESS, "Get all requests successfully");
           res.status(200).json({
             message: message(STATUSES.SUCCESS, "Get all requests successfully"),
             count: requests.length,
             requests,
           });
         } else {
-          log(STATUSES.ERROR, "Cannot get request");
           res.status(404).json({
             message: message(STATUSES.ERROR, "Cannot get request"),
             count: 0,
@@ -72,10 +67,6 @@ router.get("/:userId", (req, res, next) => {
           ...req.query,
         }).exec();
         if (requests.length) {
-          log(
-            STATUSES.SUCCESS,
-            `Get all requests belongs to ${user!._id} successfully`
-          );
           res.status(200).json({
             message: message(
               STATUSES.SUCCESS,
@@ -85,7 +76,6 @@ router.get("/:userId", (req, res, next) => {
             requests,
           });
         } else {
-          log(STATUSES.ERROR, `Cannot get requests belongs to ${user!._id}`);
           res.status(404).json({
             message: message(
               STATUSES.ERROR,
@@ -138,6 +128,7 @@ router.post("/", async (req, res, next) => {
         });
       }
     } catch (error) {
+      log(STATUSES.ERROR, error.message);
       res.status(500).json({
         message: message(STATUSES.ERROR, error.message),
         request: null,
@@ -172,6 +163,7 @@ router.put("/:id", async (req, res, next) => {
         });
       }
     } catch (error) {
+      log(STATUSES.ERROR, error.message);
       res.status(500).json({
         message: message(STATUSES.UPDATED, error.message),
         request: null,

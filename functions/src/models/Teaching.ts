@@ -1,7 +1,6 @@
-import mongoose, { model, Model, Schema, Document, Mongoose } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import { ITeaching, DAY_OF_WEEKS, PERIOD } from "../types";
 
-// Schema
 const teachingSchema: Schema = new Schema(
   {
     code: {
@@ -78,5 +77,4 @@ const teachingSchema: Schema = new Schema(
   { timestamps: true }
 );
 
-// Export
 export default mongoose.model<ITeaching>("Teaching", teachingSchema);

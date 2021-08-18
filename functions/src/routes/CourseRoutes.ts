@@ -5,11 +5,8 @@ import { STATUSES } from "../common/statuses";
 import { ROLES, ICourse } from "../types";
 import requireAuth from "../helpers/requireAuth";
 import requireRole from "../helpers/requireRoles";
-
-// Import models
 import Course from "../models/Course";
 
-// Config router
 const router = Router();
 router.use(requireAuth);
 
@@ -27,15 +24,12 @@ router.get("/", (req, res, next) => {
           ...req.query,
         }).exec();
         if (courses.length) {
-          log(STATUSES.SUCCESS, "Get all courses successfully");
-          log(STATUSES.INFO, courses);
           res.status(200).json({
             message: message(STATUSES.SUCCESS, "Get all courses successfully"),
             count: courses.length,
             courses,
           });
         } else {
-          log(STATUSES.ERROR, "Cannot get courses");
           res.status(404).json({
             message: message(STATUSES.ERROR, "Cannot get courses"),
             count: 0,
@@ -67,14 +61,11 @@ router.post("/", async (req, res, next) => {
     try {
       course = await course.save();
       if (course) {
-        log(STATUSES.CREATED, "Create new course successfully");
-        log(STATUSES.INFO, course);
         res.status(201).json({
           message: message(STATUSES.CREATED, "Create new course successfully"),
           course,
         });
       } else {
-        log(STATUSES.ERROR, "Cannot create new course");
         res.status(500).json({
           message: message(STATUSES.ERROR, "Cannot create new course"),
           course: null,
@@ -97,7 +88,6 @@ router.post("/bulk", async (req, res, next) => {
     try {
       await session.withTransaction(async () => {
         for (let index = 0; index < courses.length; index++) {
-          // Validate course
           let course: ICourse = new Course({
             _id: courses[index]._id,
             courseName: courses[index].courseName,
@@ -117,8 +107,6 @@ router.post("/bulk", async (req, res, next) => {
           }
         }
         await session.commitTransaction();
-        log(STATUSES.SUCCESS, "Create new course successfully");
-        log(STATUSES.INFO, courses);
         res.status(201).json({
           message: message(STATUSES.SUCCESS, "Create new course successfully"),
         });
@@ -149,14 +137,11 @@ router.put("/:id", async (req, res, next) => {
         { new: true }
       ).exec();
       if (course) {
-        log(STATUSES.SUCCESS, "Update course successfully");
-        log(STATUSES.INFO, course);
         res.status(200).json({
           message: message(STATUSES.SUCCESS, "Update course successfully"),
           course,
         });
       } else {
-        log(STATUSES.ERROR, "Cannot update course");
         res.status(422).json({
           message: message(STATUSES.ERROR, "Cannot update course"),
           course: null,
@@ -187,14 +172,11 @@ router.delete("/:id", async (req, res, next) => {
         { new: true }
       ).exec();
       if (deletedCourse) {
-        log(STATUSES.SUCCESS, "Delete course successfully");
-        log(STATUSES.INFO, deletedCourse);
         res.status(200).json({
           message: message(STATUSES.SUCCESS, "Delete course successfully"),
           course: deletedCourse,
         });
       } else {
-        log(STATUSES.ERROR, "Cannot delete course");
         res.status(500).json({
           message: message(STATUSES.ERROR, "Cannot delete course"),
           course: null,
@@ -210,5 +192,4 @@ router.delete("/:id", async (req, res, next) => {
   });
 });
 
-// Export
 export default router;

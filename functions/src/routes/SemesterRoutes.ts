@@ -4,11 +4,7 @@ import { STATUSES } from "../common/statuses";
 import { ROLES, ISemester } from "../types";
 import requireAuth from "../helpers/requireAuth";
 import requireRole from "../helpers/requireRoles";
-
-// Import models
 import Semester from "../models/Semester";
-
-// Config router
 const router = Router();
 router.use(requireAuth);
 
@@ -22,11 +18,8 @@ router.get("/", (req, res, next) => {
     async (req, res, next) => {
       try {
         const { status } = req.query;
-        console.log(status);
-
         const _status = Number(status);
         let semesters = [];
-        console.log(req.query);
         if (Object.entries(req.query).length) {
           semesters = await Semester.find({
             isHidden: false,
@@ -37,9 +30,7 @@ router.get("/", (req, res, next) => {
             isHidden: false,
           }).exec();
         }
-
         if (semesters.length) {
-          log(STATUSES.SUCCESS, "Get all semesters successfully");
           res.status(200).json({
             message: message(
               STATUSES.SUCCESS,
@@ -49,7 +40,6 @@ router.get("/", (req, res, next) => {
             semesters,
           });
         } else {
-          log(STATUSES.ERROR, "Cannot get semesters");
           res.status(404).json({
             message: message(STATUSES.ERROR, "Cannot get semesters"),
             count: 0,
@@ -86,8 +76,6 @@ router.post("/", async (req, res, next) => {
     try {
       semester = await semester.save();
       if (semester) {
-        log(STATUSES.CREATED, "Create new semester successfully");
-        log(STATUSES.INFO, semester);
         res.status(201).json({
           message: message(
             STATUSES.CREATED,
@@ -96,7 +84,6 @@ router.post("/", async (req, res, next) => {
           semester,
         });
       } else {
-        log(STATUSES.ERROR, "Cannot create new semester");
         res.status(500).json({
           message: message(STATUSES.ERROR, "Cannot create new semester"),
           semester,
@@ -127,14 +114,11 @@ router.put("/:id", async (req, res, next) => {
         { new: true }
       ).exec();
       if (semester) {
-        log(STATUSES.SUCCESS, "Update semester successfully");
-        log(STATUSES.INFO, semester);
         res.status(200).json({
           message: message(STATUSES.SUCCESS, "Update semester successfully"),
           semester,
         });
       } else {
-        log(STATUSES.ERROR, "Cannot update semester");
         res.status(422).json({
           message: message(STATUSES.ERROR, "Cannot update semester"),
           semester: null,
@@ -150,5 +134,4 @@ router.put("/:id", async (req, res, next) => {
   });
 });
 
-// Export
 export default router;

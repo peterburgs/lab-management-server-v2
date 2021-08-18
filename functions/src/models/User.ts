@@ -1,6 +1,6 @@
-import mongoose, { model, Model, Schema, Document, Mongoose } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import { IUser } from "../types";
-// Schema
+
 const userSchema: Schema = new Schema(
   {
     _id: {
@@ -40,5 +40,4 @@ const userSchema: Schema = new Schema(
   { timestamps: true }
 );
 
-// Export model
 export default mongoose.model<IUser>("User", userSchema);

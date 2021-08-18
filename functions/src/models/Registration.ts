@@ -1,7 +1,6 @@
-import mongoose, { model, Model, Schema, Document, Mongoose } from "mongoose";
-import { IRegistration, DAY_OF_WEEKS, PERIOD } from "../types";
+import mongoose, { Schema } from "mongoose";
+import { IRegistration } from "../types";
 
-// Schema
 const registrationSchema: Schema = new Schema(
   {
     batch: {
@@ -35,7 +34,6 @@ const registrationSchema: Schema = new Schema(
   { timestamps: true }
 );
 
-// Export
 export default mongoose.model<IRegistration>(
   "Registration",
   registrationSchema

@@ -1,7 +1,6 @@
-import mongoose, { model, Model, Schema, Document, Mongoose } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import { ILabUsage, DAY_OF_WEEKS, PERIOD } from "../types";
 
-// Schema
 const labUsageSchema: Schema = new Schema(
   {
     semester: {
@@ -59,5 +58,4 @@ const labUsageSchema: Schema = new Schema(
   { timestamps: true }
 );
 
-// Export
 export default mongoose.model<ILabUsage>("LabUsage", labUsageSchema);
