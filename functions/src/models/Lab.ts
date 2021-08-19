@@ -16,6 +16,7 @@ const labSchema: Schema = new Schema(
     description: {
       type: String,
       required: false,
+      default: "",
     },
     isAvailableForCurrentUsing: {
       type: Boolean,

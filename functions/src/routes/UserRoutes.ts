@@ -66,10 +66,15 @@ router.post("/", async (req, res, next) => {
       }
     } catch (error) {
       log(STATUSES.ERROR, error.message);
-      res.status(500).json({
-        message: message(STATUSES.ERROR, error.message),
-        user: null,
-      });
+      if (error.code === 11000) {
+        res.status(500).json({
+          message: message(STATUSES.ERROR, "There was a duplicated record"),
+        });
+      } else {
+        res.status(500).json({
+          message: message(STATUSES.ERROR, "Invalid data"),
+        });
+      }
     }
   });
 });
@@ -106,10 +111,15 @@ router.put("/:id", async (req, res, next) => {
         }
       } catch (error) {
         log(STATUSES.ERROR, error.message);
-        res.status(500).json({
-          message: message(STATUSES.ERROR, error.message),
-          user: null,
-        });
+        if (error.code === 11000) {
+          res.status(500).json({
+            message: message(STATUSES.ERROR, "There was a duplicated record"),
+          });
+        } else {
+          res.status(500).json({
+            message: message(STATUSES.ERROR, "Cannot validate data from file"),
+          });
+        }
       }
     }
   );

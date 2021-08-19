@@ -4,11 +4,8 @@ import { STATUSES } from "../common/statuses";
 import { ROLES, IComment } from "../types";
 import requireAuth from "../helpers/requireAuth";
 import requireRole from "../helpers/requireRoles";
-
-// Import models
 import Comment from "../models/Comment";
 
-// Config router
 const router = Router();
 router.use(requireAuth);
 

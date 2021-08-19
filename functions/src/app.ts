@@ -1,6 +1,5 @@
 import express, { Request, Response, NextFunction, Application } from "express";
 import connect from "./connect";
-import log from "./util/log";
 import morgan from "morgan";
 import cors from "cors";
 import * as functions from "firebase-functions";
@@ -83,5 +82,8 @@ app.use(
     });
   }
 );
-
-exports.app = functions.https.onRequest(app);
+const runtimeOpts = {
+  timeoutSeconds: 300,
+  memory: "8GB" as const,
+};
+exports.app = functions.runWith(runtimeOpts).https.onRequest(app);

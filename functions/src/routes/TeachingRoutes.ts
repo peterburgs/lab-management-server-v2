@@ -152,9 +152,16 @@ router.post("/bulk", async (req, res, next) => {
         });
       });
     } catch (error) {
-      res.status(500).json({
-        message: message(STATUSES.ERROR, error.message),
-      });
+      log(STATUSES.ERROR, error.message);
+      if (error.code === 11000) {
+        res.status(500).json({
+          message: message(STATUSES.ERROR, "There was a duplicated record"),
+        });
+      } else {
+        res.status(500).json({
+          message: message(STATUSES.ERROR, "Cannot validate data from file"),
+        });
+      }
     } finally {
       session.endSession();
     }

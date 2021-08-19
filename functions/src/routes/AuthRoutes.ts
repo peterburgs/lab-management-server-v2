@@ -15,7 +15,6 @@ router.get("/", async (req, res, next) => {
       email: req.body.user.email,
       isHidden: false,
     });
-    // If user not found
     if (!user) {
       return res.status(404).json({
         message: "Email " + req.body.user.email + " not found",
@@ -25,8 +24,6 @@ router.get("/", async (req, res, next) => {
         verifiedToken: null,
       });
     }
-
-    // If Found user
     if (user.roles.includes(Number(req.query.role))) {
       if (!user.avatarUrl) {
         user.avatarUrl = req.body.user.picture;

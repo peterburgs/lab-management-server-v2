@@ -6,6 +6,7 @@ const academicYearSchema: Schema = new Schema(
     name: {
       type: String,
       required: true,
+      unique: true,
     },
     numberOfWeeks: {
       type: Number,
